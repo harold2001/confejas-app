@@ -1,0 +1,7 @@
+{
+  "name": "confejas-app2",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
