@@ -1,0 +1,45 @@
+import API_BASE_ROUTES from '../constants/api-base-routes';
+import { CreateUserDto } from '../interfaces/dto/create-user.dto';
+import { FilterUserDto } from '../interfaces/dto/filter-user.dto';
+import { PaginationDto } from '../interfaces/dto/pagination.dto';
+import { UpdateUserDto } from '../interfaces/dto/update-user.dto';
+import { IUser } from '../interfaces/user.interface';
+import axiosApi from './index.api';
+
+export const route = API_BASE_ROUTES.USERS;
+
+export const getUsers = async (): Promise<IUser[]> => {
+  const res = await axiosApi.get(route);
+  return res.data;
+};
+
+export const getUsersPaginated = async ({
+  pagination,
+  filters,
+}: {
+  pagination: PaginationDto;
+  filters: FilterUserDto;
+}): Promise<{ count: number; data: IUser[] }> => {
+  const res = await axiosApi.post(`${route}/filter`, { pagination, filters });
+  return res.data;
+};
+
+export const getUserById = async (id: string): Promise<IUser> => {
+  const res = await axiosApi.get(`${route}/${id}`);
+  return res.data;
+};
+
+export const createUser = async (body: CreateUserDto): Promise<IUser> => {
+  const res = await axiosApi.post(route, body);
+  return res.data;
+};
+
+export const updateUser = async (body: UpdateUserDto): Promise<IUser> => {
+  const res = await axiosApi.put(`${route}/${body.id}`, body);
+  return res.data;
+};
+
+export const markAsArrived = async (id: string): Promise<IUser> => {
+  const res = await axiosApi.put(`${route}/arrived/${id}`);
+  return res.data;
+};

@@ -1,8 +1,12 @@
-import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
+import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
-import Menu from './components/Menu';
-import Page from './pages/Page';
+import { Toaster } from 'react-hot-toast';
+import Login from './pages/auth/Login';
+import Dashboard from './pages/dashboard/Dashboard';
+import Profile from './pages/Profile';
+import MainLayout from './layouts/MainLayout';
+import ProtectedRoute from './components/ProtectedRoute';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -27,30 +31,95 @@ import '@ionic/react/css/display.css';
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
-/* import '@ionic/react/css/palettes/dark.always.css'; */
+import '@ionic/react/css/palettes/dark.always.css';
 /* import '@ionic/react/css/palettes/dark.class.css'; */
-import '@ionic/react/css/palettes/dark.system.css';
+// import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import Users from './pages/users/Users';
+import { ROUTES } from './constants/routes';
+import ConfirmAttendance from './pages/attendance/ConfirmAttendance';
+import UserDetails from './pages/users/details/UserDetails';
 
 setupIonicReact();
 
 const App: React.FC = () => {
   return (
     <IonApp>
+      <Toaster
+        position='top-center'
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#4ade80',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 4000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
       <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
-          <IonRouterOutlet id="main">
-            <Route path="/" exact={true}>
-              <Redirect to="/folder/Inbox" />
+        <MainLayout contentId='main'>
+          <IonRouterOutlet id='main'>
+            <Route path='/' exact={true}>
+              <Redirect to={ROUTES.DASHBOARD} />
             </Route>
-            <Route path="/folder/:name" exact={true}>
-              <Page />
+
+            <Route path={ROUTES.LOGIN} exact={true}>
+              <Login />
             </Route>
+
+            {/* Protected Routes */}
+            <ProtectedRoute
+              path={ROUTES.DASHBOARD}
+              exact={true}
+              component={Dashboard}
+            />
+            <ProtectedRoute
+              path={ROUTES.USERS}
+              exact={true}
+              component={Users}
+            />
+            <ProtectedRoute
+              path={ROUTES.CREATE_USER}
+              exact={true}
+              component={UserDetails}
+            />
+            <ProtectedRoute
+              path={ROUTES.EDIT_USER}
+              exact={true}
+              component={UserDetails}
+            />
+            <ProtectedRoute
+              path={ROUTES.PROFILE}
+              exact={true}
+              component={Profile}
+            />
+            <ProtectedRoute
+              path={ROUTES.CONFIRM_ATTENDANCE}
+              exact={true}
+              component={ConfirmAttendance}
+            />
+            {/* Add more protected routes here:
+            <ProtectedRoute path='/settings' exact={true} component={Settings} />
+            <ProtectedRoute path='/users' exact={true} component={Users} />
+            <ProtectedRoute path='/rooms' exact={true} component={Rooms} />
+            */}
           </IonRouterOutlet>
-        </IonSplitPane>
+        </MainLayout>
       </IonReactRouter>
     </IonApp>
   );

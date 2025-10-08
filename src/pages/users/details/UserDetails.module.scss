@@ -1,0 +1,10 @@
+.headerCol {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+}
