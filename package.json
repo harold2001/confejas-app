@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "serve -s dist",
     "build": "tsc && vite build && cp public/_redirects dist/",
     "preview": "vite preview",
     "test.e2e": "cypress run",
@@ -34,6 +35,7 @@
     "react-hot-toast": "^2.6.0",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
+    "serve": "^14.2.5",
     "zod": "^4.1.12",
     "zustand": "^5.0.8"
   },
