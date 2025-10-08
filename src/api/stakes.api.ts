@@ -1,5 +1,5 @@
 import API_BASE_ROUTES from '../constants/api-base-routes';
-import { IStake } from '../interfaces/stakes.interface';
+import { IStake } from '../interfaces/stake.interface';
 import axiosApi from './index.api';
 
 export const route = API_BASE_ROUTES.STAKES;
