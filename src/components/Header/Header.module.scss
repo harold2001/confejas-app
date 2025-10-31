@@ -1,0 +1,35 @@
+.overrideHeaderShadow {
+  box-shadow: 0 1px 2px -0.5px rgba(0, 0, 0, 0.1), 0 2px 2.5px 0 rgba(0, 0, 0, 0.07), 0 0.5px 5px 0 rgba(0, 0, 0, 0.06);
+}
+
+.addButtonContainer {
+  display: flex;
+  transform: translateZ(0);
+  align-items: center;
+}
+
+.headerBtn {
+  --border-radius: 6px !important;
+  --padding-top: 10.5px !important;
+  --padding-bottom: 10.5px !important;
+  --padding-start: 17.5px !important;
+  --padding-end: 17.5px !important;
+}
+
+.simpleHeader {
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 2px -0.5px rgba(0, 0, 0, 0.1), 0 2px 2.5px 0 rgba(0, 0, 0, 0.07), 0 0.5px 5px 0 rgba(0, 0, 0, 0.06);
+}
+
+.backButton {
+  --padding-end: 0 !important;
+}
+
+ion-header ion-toolbar.customToolbarPadding {
+  padding: 30px 0 5px 0;
+}
+
+ion-header ion-toolbar.customToolbarPaddingiOs {
+  padding: 55px 0 5px 0;
+}

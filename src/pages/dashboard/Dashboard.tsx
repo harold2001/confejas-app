@@ -14,16 +14,19 @@ import {
 import { personAddOutline, scanOutline, searchOutline } from 'ionicons/icons';
 import styles from './Dashboard.module.scss';
 import { ROUTES } from '../../constants/routes';
+import usePlatform from '../../hooks/usePlatform';
+import Header from '../../components/Header/Header';
 
 const Dashboard = () => {
+  const { isMobile } = usePlatform();
+
   return (
     <IonPage>
+      {isMobile() && <Header title='Companies' />}
       <IonContent className='ion-padding'>
         <IonCard>
           <IonCardHeader>
-            <IonCardTitle className='ion-text-center ion-margin-bottom'>
-              Menu Principal
-            </IonCardTitle>
+            <IonCardTitle className='ion-text-center ion-margin-bottom'>Menu Principal</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
@@ -35,12 +38,7 @@ const Dashboard = () => {
                   routerLink={ROUTES.CREATE_USER}
                   className={styles.actionButton}
                 >
-                  <IonIcon
-                    aria-hidden='true'
-                    slot='start'
-                    icon={personAddOutline}
-                    className={styles.icon}
-                  />
+                  <IonIcon aria-hidden='true' slot='start' icon={personAddOutline} className={styles.icon} />
                   <IonText>
                     <span>Registrar Nuevo Participante</span>
                   </IonText>
@@ -55,12 +53,7 @@ const Dashboard = () => {
                   routerLink={ROUTES.SCAN_USER}
                   className={styles.actionButton}
                 >
-                  <IonIcon
-                    aria-hidden='true'
-                    slot='start'
-                    icon={scanOutline}
-                    className={styles.icon}
-                  />
+                  <IonIcon aria-hidden='true' slot='start' icon={scanOutline} className={styles.icon} />
                   <IonText>
                     <span>Escanear QR</span>
                   </IonText>
@@ -75,12 +68,7 @@ const Dashboard = () => {
                   routerLink={ROUTES.USERS}
                   className={styles.actionButton}
                 >
-                  <IonIcon
-                    aria-hidden='true'
-                    slot='start'
-                    icon={searchOutline}
-                    className={styles.icon}
-                  />
+                  <IonIcon aria-hidden='true' slot='start' icon={searchOutline} className={styles.icon} />
                   <IonText>
                     <span>Consultar participantes</span>
                   </IonText>

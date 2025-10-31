@@ -10,6 +10,9 @@ import {
   IonSpinner,
   IonItem,
   IonLabel,
+  IonGrid,
+  IonRow,
+  IonCol,
 } from '@ionic/react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,6 +21,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useEffect } from 'react';
 import { useIonRouter } from '@ionic/react';
+import styles from './Login.module.scss';
 
 const Login = () => {
   const router = useIonRouter();
@@ -49,30 +53,24 @@ const Login = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Login</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent className='ion-padding'>
-        <div className='flex items-center justify-center min-h-full'>
-          <div className='w-full max-w-md space-y-6 p-6'>
-            {/* Title */}
-            <div className='text-center'>
+      <IonContent>
+        <IonGrid className={`ion-padding ${styles.gridContainer}`}>
+          <IonRow>
+            <IonCol>
               <IonText color='primary'>
-                <h1 className='text-3xl font-bold'>Welcome Back</h1>
+                <h1 className='text-3xl font-bold'>Sistema de Asistencia</h1>
               </IonText>
               <IonText color='medium'>
-                <p className='mt-2'>Sign in to continue</p>
+                <p className='mt-2'>Inicia sesión para continuar</p>
               </IonText>
-            </div>
+            </IonCol>
+          </IonRow>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-              {/* Email Input */}
-              <div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <IonRow className='ion-margin-bottom'>
+              <IonCol>
                 <IonItem className={errors.email ? 'ion-invalid' : ''}>
-                  <IonLabel position='stacked'>Email</IonLabel>
+                  <IonLabel position='stacked'>Correo electrónico</IonLabel>
                   <Controller
                     name='email'
                     control={control}
@@ -80,23 +78,24 @@ const Login = () => {
                       <IonInput
                         {...field}
                         type='email'
-                        placeholder='Enter your email'
+                        placeholder='Ingrese su correo electrónico'
                         onIonInput={e => field.onChange(e.detail.value)}
                       />
                     )}
                   />
                 </IonItem>
                 {errors.email && (
-                  <IonText color='danger' className='text-sm ml-4'>
+                  <IonText color='danger'>
                     <p>{errors.email.message}</p>
                   </IonText>
                 )}
-              </div>
+              </IonCol>
+            </IonRow>
 
-              {/* Password Input */}
-              <div>
+            <IonRow className='ion-margin-bottom'>
+              <IonCol>
                 <IonItem className={errors.password ? 'ion-invalid' : ''}>
-                  <IonLabel position='stacked'>Password</IonLabel>
+                  <IonLabel position='stacked'>Contraseña</IonLabel>
                   <Controller
                     name='password'
                     control={control}
@@ -104,53 +103,52 @@ const Login = () => {
                       <IonInput
                         {...field}
                         type='password'
-                        placeholder='Enter your password'
+                        placeholder='Ingrese su contraseña'
                         onIonInput={e => field.onChange(e.detail.value)}
                       />
                     )}
                   />
                 </IonItem>
                 {errors.password && (
-                  <IonText color='danger' className='text-sm ml-4'>
+                  <IonText color='danger'>
                     <p>{errors.password.message}</p>
                   </IonText>
                 )}
-              </div>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonButton expand='block' type='submit' disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <IonSpinner name='crescent' className='mr-2' />
+                      Iniciando sesión...
+                    </>
+                  ) : (
+                    'Iniciar Sesión'
+                  )}
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          </form>
 
-              {/* Submit Button */}
-              <IonButton
-                expand='block'
-                type='submit'
-                disabled={isLoading}
-                className='mt-6'
-              >
-                {isLoading ? (
-                  <>
-                    <IonSpinner name='crescent' className='mr-2' />
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign In'
-                )}
-              </IonButton>
-            </form>
-
-            {/* Additional Links */}
-            <div className='text-center mt-4'>
+          {/* Additional Links */}
+          <IonRow>
+            <IonCol>
               <IonText color='medium'>
                 <p className='text-sm'>
-                  Don't have an account?{' '}
+                  ¿No tienes una cuenta?{' '}
                   <a
                     href='/auth/register'
                     className='text-blue-500 hover:underline'
                   >
-                    Sign up
+                    Regístrate
                   </a>
                 </p>
               </IonText>
-            </div>
-          </div>
-        </div>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );

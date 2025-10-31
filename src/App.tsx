@@ -6,7 +6,7 @@ import Login from './pages/auth/Login';
 import Dashboard from './pages/dashboard/Dashboard';
 import Profile from './pages/Profile';
 import MainLayout from './layouts/MainLayout';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -44,7 +44,7 @@ import UserDetails from './pages/users/details/UserDetails';
 
 setupIonicReact();
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <IonApp>
       <Toaster

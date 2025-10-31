@@ -25,12 +25,16 @@ import { useUser } from '../../hooks/useUser';
 import { fullNameBodyTemplate } from './table.helper';
 import { ROUTES } from '../../constants/routes';
 import { ROLES } from '../../constants/roles';
+import usePlatform from '../../hooks/usePlatform';
+import Header from '../../components/Header/Header';
 
 const Users = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   // const [first, setFirst] = useState(0); // Index of first record to display
   // const [rows, setRows] = useState(10); // Number of rows per page
   const { markAsArrived } = useUser();
+  const { isMobile } = usePlatform();
+  const isMobileView = isMobile();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: [QUERY_KEYS.GET_USERS_PAGINATED],
@@ -92,7 +96,7 @@ const Users = () => {
       <div className='ion-text-center'>
         <IonCheckbox
           checked={rowData.hasArrived}
-          onIonChange={async e => {
+          onIonChange={async (e) => {
             await markAsArrived(rowData.id);
             await refetch();
           }}
@@ -117,8 +121,8 @@ const Users = () => {
   // Search header
   const renderHeader = () => {
     return (
-      <IonRow>
-        <IonCol>
+      <IonRow className='ion-justify-content-center'>
+        <IonCol {...(isMobileView ? { size: 'auto' } : {})}>
           <h2>Lista de Participantes</h2>
         </IonCol>
         <IonCol size='auto'>
@@ -128,8 +132,8 @@ const Users = () => {
               id='search-users'
               name='search-users'
               value={globalFilterValue}
-              onChange={e => setGlobalFilterValue(e.target.value)}
-              placeholder='Buscar participantes...'
+              onChange={(e) => setGlobalFilterValue(e.target.value)}
+              placeholder='Buscar por nombre, estaca o barrio'
             />
           </IconField>
         </IonCol>
@@ -144,14 +148,13 @@ const Users = () => {
   // Show error toast if query fails
   useEffect(() => {
     if (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to fetch users'
-      );
+      toast.error(error instanceof Error ? error.message : 'Failed to fetch users');
     }
   }, [error]);
 
   return (
     <IonPage>
+      {isMobileView && <Header title='Participantes' />}
       <IonContent className='ion-padding'>
         <IonRow>
           <IonCol>
@@ -178,26 +181,10 @@ const Users = () => {
                   globalFilter={globalFilterValue}
                   header={renderHeader()}
                   emptyMessage='Usuarios no encontrados'
-                  globalFilterFields={[
-                    'firstName',
-                    'paternalLastName',
-                    'maternalLastName',
-                    'stake.name',
-                    'ward',
-                  ]}
+                  globalFilterFields={['firstName', 'paternalLastName', 'maternalLastName', 'stake.name', 'ward']}
                 >
-                  <Column
-                    field='hasArrived'
-                    header='¿Asistió?'
-                    body={hasArrivedBodyTemplate}
-                    sortable
-                  />
-                  <Column
-                    field='firstName'
-                    header='Nombre Completo'
-                    body={fullNameBodyTemplate}
-                    sortable
-                  />
+                  <Column field='hasArrived' header='¿Asistió?' body={hasArrivedBodyTemplate} sortable />
+                  <Column field='firstName' header='Nombre Completo' body={fullNameBodyTemplate} sortable />
                   {/* <Column field='dni' header='DNI' sortable />
                   <Column field='email' header='Correo Electrónico' sortable />
                   <Column field='phone' header='Teléfono' sortable />
@@ -214,16 +201,10 @@ const Users = () => {
                   <Column
                     field='isMemberOfTheChurch'
                     header='Miembro de la Iglesia'
-                    body={(rowData: IUser) =>
-                      rowData.isMemberOfTheChurch ? 'Sí' : 'No'
-                    }
+                    body={(rowData: IUser) => (rowData.isMemberOfTheChurch ? 'Sí' : 'No')}
                     sortable
                   />
-                  <Column
-                    header='Acciones'
-                    body={actionBodyTemplate}
-                    style={{ width: '12rem' }}
-                  />
+                  <Column header='Acciones' body={actionBodyTemplate} style={{ width: '12rem' }} />
                 </DataTable>
               </div>
             )}

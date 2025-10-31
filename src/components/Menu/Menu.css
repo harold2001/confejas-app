@@ -114,7 +114,9 @@ ion-item.selected {
 }
 
 @media screen and (min-width: 768px) {
-  ion-menu {
-    --width: 300px;
+  ion-menu,
+  ion-menu ion-content {
+    width: 350px;
+    --max-width: 350px;
   }
 }

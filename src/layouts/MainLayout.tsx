@@ -1,6 +1,6 @@
 import { IonContent, IonPage, IonSplitPane } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
-import Menu from '../components/Menu';
+import Menu from '../components/Menu/Menu';
 
 interface ConditionalSplitPaneProps {
   children: React.ReactNode;

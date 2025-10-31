@@ -1,6 +1,6 @@
 import { IonRouterOutlet, IonSplitPane } from '@ionic/react';
-import Menu from './Menu';
-import ProtectedRoute from './ProtectedRoute';
+import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
+import Menu from '../components/Menu/Menu';
 
 interface ProtectedRouteConfig {
   path: string;

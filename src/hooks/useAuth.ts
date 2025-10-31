@@ -7,12 +7,12 @@ import { login } from '../api/auth.api';
 
 export const useAuth = () => {
   const router = useIonRouter();
-  const setUser = useAuthStore(state => state.setUser);
-  const clearUser = useAuthStore(state => state.clearUser);
+  const setUser = useAuthStore((state) => state.setUser);
+  const clearUser = useAuthStore((state) => state.clearUser);
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: async data => {
+    onSuccess: async (data) => {
       // Store both access and refresh tokens in Capacitor Preferences
       await Preferences.set({ key: 'accessToken', value: data.accessToken });
       await Preferences.set({ key: 'refreshToken', value: data.refreshToken });
@@ -21,14 +21,14 @@ export const useAuth = () => {
       setUser(data.user);
 
       // Show success toast
-      toast.success(`Welcome back, ${data.user.firstName}!`);
+      toast.success(`¡Bienvenido de nuevo, ${data.user.firstName}!`);
 
       // Redirect to dashboard
       router.push('/dashboard', 'root', 'replace');
     },
     onError: (error: Error) => {
       // Show error toast
-      toast.error(error.message || 'Invalid credentials. Please try again.');
+      toast.error(error.message || 'Credenciales inválidas. Por favor, inténtalo de nuevo.');
     },
   });
 
@@ -39,7 +39,7 @@ export const useAuth = () => {
 
     // Clear user data from Zustand
     clearUser();
-    toast.success('Logged out successfully');
+    toast.success('Sesión cerrada con éxito');
     router.push('/auth/login', 'root', 'replace');
   };
 

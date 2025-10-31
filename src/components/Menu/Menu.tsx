@@ -12,9 +12,9 @@ import {
 import { useLocation } from 'react-router-dom';
 import { logOutOutline, peopleOutline, homeOutline } from 'ionicons/icons';
 import './Menu.css';
-import { useAuthStore } from '../store/useAuthStore';
-import { useAuth } from '../hooks/useAuth';
-import { ROUTES } from '../constants/routes';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useAuth } from '../../hooks/useAuth';
+import { ROUTES } from '../../constants/routes';
 
 interface AppPage {
   url: string;
@@ -35,7 +35,7 @@ const appPages: AppPage[] = [
   },
 ];
 
-const Menu: React.FC = () => {
+const Menu = () => {
   const location = useLocation();
   const { user } = useAuthStore();
   const { logout } = useAuth();
@@ -52,19 +52,13 @@ const Menu: React.FC = () => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
                 <IonItem
-                  className={
-                    location.pathname === appPage.url ? 'selected' : ''
-                  }
+                  className={location.pathname === appPage.url ? 'selected' : ''}
                   routerLink={appPage.url}
                   routerDirection='none'
                   lines='none'
                   detail={false}
                 >
-                  <IonIcon
-                    aria-hidden='true'
-                    slot='start'
-                    icon={appPage.icon}
-                  />
+                  <IonIcon aria-hidden='true' slot='start' icon={appPage.icon} />
                   <IonLabel>{appPage.title}</IonLabel>
                 </IonItem>
               </IonMenuToggle>
@@ -74,15 +68,9 @@ const Menu: React.FC = () => {
 
         <IonList>
           <IonMenuToggle autoHide={false}>
-            <IonItem
-              button
-              onClick={logout}
-              lines='none'
-              detail={false}
-              className='logout-item'
-            >
-              <IonIcon aria-hidden='true' slot='start' icon={logOutOutline} />
-              <IonLabel>Logout</IonLabel>
+            <IonItem button onClick={logout} lines='none' detail={false} className='logout-item'>
+              <IonIcon aria-hidden='true' slot='start' icon={logOutOutline} color='danger' />
+              <IonLabel color='danger'>Cerrar Sesión</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>
