@@ -46,7 +46,7 @@ const UserDetails = () => {
   const router = useIonRouter();
   const isEditMode = !!id;
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: [QUERY_KEYS.GET_USER_BY_ID, id],
     queryFn: () => getUserById(id!),
     enabled: isEditMode,
@@ -101,10 +101,8 @@ const UserDetails = () => {
         paternalLastName: data.paternalLastName || '',
         maternalLastName: data.maternalLastName || '',
         dni: data.dni || '',
-        birthDate: data.birthDate
-          ? new Date(data.birthDate).toISOString()
-          : undefined,
-        gender: data.gender as 'Varón' | 'Mujer' | undefined,
+        birthDate: data.birthDate ? new Date(data.birthDate).toISOString() : undefined,
+        gender: data.gender === 'Varón' || data.gender === 'Mujer' ? data.gender : undefined,
         phone: data.phone || '',
         email: data.email || '',
         address: data.address || '',
@@ -127,25 +125,20 @@ const UserDetails = () => {
     }
   }, [error]);
 
-  const onSubmit = async (
-    formData: CreateUserFormData | UpdateUserFormData
-  ) => {
+  const onSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
     try {
       if (isEditMode) {
         // Update existing user
         const updateData = {
           ...(formData as UpdateUserFormData),
-          birthDate: formData.birthDate
-            ? new Date(formData.birthDate)
-            : undefined,
+          birthDate: formData.birthDate ? new Date(formData.birthDate) : undefined,
         };
         await updateUser(updateData as any);
         toast.success('Usuario actualizado correctamente');
+        refetch();
       } else {
         // Create new user - find Participant role ID
-        const participantRole = roles?.find(
-          role => role.name === ROLES.PARTICIPANT
-        );
+        const participantRole = roles?.find((role) => role.name === ROLES.PARTICIPANT);
         if (!participantRole) {
           toast.error('No se pudo encontrar el rol de Participante');
           return;
@@ -153,24 +146,23 @@ const UserDetails = () => {
 
         const createData = {
           ...(formData as CreateUserFormData),
-          birthDate: formData.birthDate
-            ? new Date(formData.birthDate)
-            : undefined,
+          birthDate: formData.birthDate ? new Date(formData.birthDate) : undefined,
           password: 'password', // Default password
           roleIds: [participantRole.id], // Use Participant role ID
         };
+
         await createUser(createData as any);
         toast.success('Usuario creado correctamente');
+        router.push(ROUTES.USERS, 'back', 'replace');
       }
-      router.push(ROUTES.USERS, 'back', 'replace');
     } catch (err) {
       console.error('Error saving user:', err);
-      toast.error(
-        isEditMode
-          ? 'Error al actualizar el usuario'
-          : 'Error al crear el usuario'
-      );
+      toast.error(isEditMode ? 'Error al actualizar el usuario' : 'Error al crear el usuario');
     }
+  };
+
+  const onError = () => {
+    toast.error('Por favor, corrija los errores en el formulario.');
   };
 
   if (isLoading) {
@@ -196,34 +188,16 @@ const UserDetails = () => {
     <IonPage>
       <IonContent className='ion-padding'>
         <IonRow>
-          <IonCol
-            size='12'
-            sizeMd='10'
-            offsetMd='1'
-            sizeLg='8'
-            offsetLg='2'
-            className={styles.headerCol}
-          >
-            <IonButton
-              routerLink={ROUTES.USERS}
-              fill='clear'
-              type='button'
-              color='dark'
-            >
-              <IonIcon
-                icon={arrowBackOutline}
-                slot='icon-only'
-                aria-hidden='true'
-              />
+          <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2' className={styles.headerCol}>
+            <IonButton routerLink={ROUTES.USERS} fill='clear' type='button' color='dark'>
+              <IonIcon icon={arrowBackOutline} slot='icon-only' aria-hidden='true' />
             </IonButton>
-            <h1 className='ion-no-margin'>
-              {isEditMode ? 'Editar Usuario' : 'Crear Usuario'}
-            </h1>
+            <h1 className='ion-no-margin'>{isEditMode ? 'Editar Usuario' : 'Crear Usuario'}</h1>
           </IonCol>
         </IonRow>
         <IonRow>
           <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2'>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit, onError)}>
               {/* Personal Information Section */}
               <IonCard>
                 <IonCardHeader>
@@ -239,19 +213,10 @@ const UserDetails = () => {
                         <Controller
                           name='firstName'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese el nombre'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el nombre' />}
                         />
                       </IonItem>
-                      {errors.firstName && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>
-                          {errors.firstName.message}
-                        </p>
-                      )}
+                      {errors.firstName && <p style={{ color: 'red', fontSize: '12px' }}>{errors.firstName.message}</p>}
                     </IonCol>
 
                     <IonCol size='12' sizeMd='6'>
@@ -260,12 +225,7 @@ const UserDetails = () => {
                         <Controller
                           name='middleName'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese el segundo nombre'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el segundo nombre' />}
                         />
                       </IonItem>
                     </IonCol>
@@ -273,24 +233,16 @@ const UserDetails = () => {
                     <IonCol size='12' sizeMd='6'>
                       <IonItem>
                         <IonLabel position='stacked'>
-                          Apellido Paterno{' '}
-                          <span style={{ color: 'red' }}>*</span>
+                          Apellido Paterno <span style={{ color: 'red' }}>*</span>
                         </IonLabel>
                         <Controller
                           name='paternalLastName'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese el apellido paterno'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el apellido paterno' />}
                         />
                       </IonItem>
                       {errors.paternalLastName && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>
-                          {errors.paternalLastName.message}
-                        </p>
+                        <p style={{ color: 'red', fontSize: '12px' }}>{errors.paternalLastName.message}</p>
                       )}
                     </IonCol>
 
@@ -300,18 +252,11 @@ const UserDetails = () => {
                         <Controller
                           name='maternalLastName'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese el apellido materno'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el apellido materno' />}
                         />
                       </IonItem>
                       {errors.maternalLastName && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>
-                          {errors.maternalLastName.message}
-                        </p>
+                        <p style={{ color: 'red', fontSize: '12px' }}>{errors.maternalLastName.message}</p>
                       )}
                     </IonCol>
 
@@ -321,9 +266,7 @@ const UserDetails = () => {
                         <Controller
                           name='dni'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput {...field} placeholder='Ingrese el DNI' />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el DNI' />}
                         />
                       </IonItem>
                     </IonCol>
@@ -336,15 +279,13 @@ const UserDetails = () => {
                           control={control}
                           render={({ field }) => (
                             <IonSelect
-                              {...field}
+                              value={field.value}
+                              onIonChange={(e) => field.onChange(e.detail.value)}
                               placeholder='Seleccione el género'
+                              required={false}
                             >
-                              <IonSelectOption value='Varón'>
-                                Varón
-                              </IonSelectOption>
-                              <IonSelectOption value='Mujer'>
-                                Mujer
-                              </IonSelectOption>
+                              <IonSelectOption value='Varón'>Varón</IonSelectOption>
+                              <IonSelectOption value='Mujer'>Mujer</IonSelectOption>
                             </IonSelect>
                           )}
                         />
@@ -353,15 +294,11 @@ const UserDetails = () => {
 
                     <IonCol size='12' sizeMd='6'>
                       <IonItem>
-                        <IonLabel position='stacked'>
-                          Fecha de Nacimiento
-                        </IonLabel>
+                        <IonLabel position='stacked'>Fecha de Nacimiento</IonLabel>
                         <Controller
                           name='birthDate'
                           control={control}
-                          render={({ field }) => (
-                            <IonDatetime {...field} presentation='date' />
-                          )}
+                          render={({ field }) => <IonDatetime {...field} presentation='date' />}
                         />
                       </IonItem>
                     </IonCol>
@@ -372,20 +309,10 @@ const UserDetails = () => {
                         <Controller
                           name='age'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              type='number'
-                              placeholder='Ingrese la edad'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} type='number' placeholder='Ingrese la edad' />}
                         />
                       </IonItem>
-                      {errors.age && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>
-                          {errors.age.message}
-                        </p>
-                      )}
+                      {errors.age && <p style={{ color: 'red', fontSize: '12px' }}>{errors.age.message}</p>}
                     </IonCol>
                   </IonRow>
                 </IonCardContent>
@@ -404,20 +331,10 @@ const UserDetails = () => {
                         <Controller
                           name='email'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              type='email'
-                              placeholder='ejemplo@correo.com'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} type='email' placeholder='ejemplo@correo.com' />}
                         />
                       </IonItem>
-                      {errors.email && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>
-                          {errors.email.message}
-                        </p>
-                      )}
+                      {errors.email && <p style={{ color: 'red', fontSize: '12px' }}>{errors.email.message}</p>}
                     </IonCol>
 
                     <IonCol size='12' sizeMd='6'>
@@ -426,13 +343,7 @@ const UserDetails = () => {
                         <Controller
                           name='phone'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              type='tel'
-                              placeholder='Ingrese el teléfono'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} type='tel' placeholder='Ingrese el teléfono' />}
                         />
                       </IonItem>
                     </IonCol>
@@ -443,13 +354,7 @@ const UserDetails = () => {
                         <Controller
                           name='address'
                           control={control}
-                          render={({ field }) => (
-                            <IonTextarea
-                              {...field}
-                              placeholder='Ingrese la dirección'
-                              rows={2}
-                            />
-                          )}
+                          render={({ field }) => <IonTextarea {...field} placeholder='Ingrese la dirección' rows={2} />}
                         />
                       </IonItem>
                     </IonCol>
@@ -460,12 +365,7 @@ const UserDetails = () => {
                         <Controller
                           name='region'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese la región'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese la región' />}
                         />
                       </IonItem>
                     </IonCol>
@@ -476,12 +376,7 @@ const UserDetails = () => {
                         <Controller
                           name='department'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese el departamento'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el departamento' />}
                         />
                       </IonItem>
                     </IonCol>
@@ -502,19 +397,10 @@ const UserDetails = () => {
                         <Controller
                           name='ward'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese el barrio'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el barrio' />}
                         />
                       </IonItem>
-                      {errors.ward && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>
-                          {errors.ward.message}
-                        </p>
-                      )}
+                      {errors.ward && <p style={{ color: 'red', fontSize: '12px' }}>{errors.ward.message}</p>}
                     </IonCol>
 
                     <IonCol size='12' sizeMd='6'>
@@ -525,19 +411,15 @@ const UserDetails = () => {
                           control={control}
                           render={({ field }) => (
                             <IonSelect
-                              {...field}
+                              value={field.value}
+                              onIonChange={(e) => field.onChange(e.detail.value)}
                               placeholder='Seleccione una estaca'
                             >
                               {stakesLoading ? (
-                                <IonSelectOption value=''>
-                                  Cargando...
-                                </IonSelectOption>
+                                <IonSelectOption value=''>Cargando...</IonSelectOption>
                               ) : (
-                                stakes?.map(stake => (
-                                  <IonSelectOption
-                                    key={stake.id}
-                                    value={stake.id}
-                                  >
+                                stakes?.map((stake) => (
+                                  <IonSelectOption key={stake.id} value={stake.id}>
                                     {stake.name}
                                   </IonSelectOption>
                                 ))
@@ -546,11 +428,7 @@ const UserDetails = () => {
                           )}
                         />
                       </IonItem>
-                      {errors.stakeId && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>
-                          {errors.stakeId.message}
-                        </p>
-                      )}
+                      {errors.stakeId && <p style={{ color: 'red', fontSize: '12px' }}>{errors.stakeId.message}</p>}
                     </IonCol>
 
                     <IonCol size='12'>
@@ -560,12 +438,7 @@ const UserDetails = () => {
                           name='isMemberOfTheChurch'
                           control={control}
                           render={({ field }) => (
-                            <IonToggle
-                              checked={field.value}
-                              onIonChange={e =>
-                                field.onChange(e.detail.checked)
-                              }
-                            />
+                            <IonToggle checked={field.value} onIonChange={(e) => field.onChange(e.detail.checked)} />
                           )}
                         />
                       </IonItem>
@@ -588,11 +461,7 @@ const UserDetails = () => {
                           name='medicalCondition'
                           control={control}
                           render={({ field }) => (
-                            <IonTextarea
-                              {...field}
-                              placeholder='Ingrese alguna condición médica importante'
-                              rows={3}
-                            />
+                            <IonTextarea {...field} placeholder='Ingrese alguna condición médica importante' rows={3} />
                           )}
                         />
                       </IonItem>
@@ -600,9 +469,7 @@ const UserDetails = () => {
 
                     <IonCol size='12'>
                       <IonItem>
-                        <IonLabel position='stacked'>
-                          Notas / Taller Propuesto
-                        </IonLabel>
+                        <IonLabel position='stacked'>Notas / Taller Propuesto</IonLabel>
                         <Controller
                           name='notes'
                           control={control}
@@ -623,12 +490,7 @@ const UserDetails = () => {
                         <Controller
                           name='keyCode'
                           control={control}
-                          render={({ field }) => (
-                            <IonInput
-                              {...field}
-                              placeholder='Ingrese el código de llave'
-                            />
-                          )}
+                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el código de llave' />}
                         />
                       </IonItem>
                     </IonCol>
@@ -649,11 +511,7 @@ const UserDetails = () => {
                   </IonButton>
                 </IonCol>
                 <IonCol size='12' sizeMd='6'>
-                  <IonButton
-                    expand='block'
-                    type='submit'
-                    disabled={isSubmitting}
-                  >
+                  <IonButton expand='block' type='submit' disabled={isSubmitting}>
                     {isSubmitting ? (
                       <IonSpinner name='crescent' />
                     ) : isEditMode ? (

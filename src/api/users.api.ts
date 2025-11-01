@@ -35,7 +35,7 @@ export const createUser = async (body: CreateUserDto): Promise<IUser> => {
 };
 
 export const updateUser = async (body: UpdateUserDto): Promise<IUser> => {
-  const res = await axiosApi.put(`${route}/${body.id}`, body);
+  const res = await axiosApi.patch(`${route}/${body.id}`, body);
   return res.data;
 };
 
