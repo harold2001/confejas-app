@@ -26,9 +26,15 @@ importers:
       '@capacitor/status-bar':
         specifier: 7.0.2
         version: 7.0.2(@capacitor/core@7.4.2)
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.1
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.64.0(react@19.0.0))
+      '@ionic/core':
+        specifier: ^8.7.11
+        version: 8.7.11
       '@ionic/react':
         specifier: ^8.5.0
         version: 8.7.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -879,6 +885,10 @@ packages:
     resolution: {integrity: sha512-5K1/mKhWaMfreBGJTwval43JJmkip0RmM+3+IuqupeSKNC/Th2Kc7ucaq5ovTSra/OOKB9c58CGSz3QMVbWt0A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@eslint/js@9.39.1':
+    resolution: {integrity: sha512-S26Stp4zCy88tH94QbBv3XCuzRQiZ9yXofEILmglYTh/Ug/a9/umqvgFtYBAo3Lp0nsI/5/qH1CCrbdK3AP1Tw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
   '@eslint/object-schema@2.1.6':
     resolution: {integrity: sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -915,6 +925,9 @@ packages:
   '@ionic/cli-framework-output@2.2.8':
     resolution: {integrity: sha512-TshtaFQsovB4NWRBydbNFawql6yul7d5bMiW1WYYf17hd99V6xdDdk3vtF51bw6sLkxON3bDQpWsnUc9/hVo3g==}
     engines: {node: '>=16.0.0'}
+
+  '@ionic/core@8.7.11':
+    resolution: {integrity: sha512-9UX9IeEztWWXymi+xCUMEBnnY+TbaR8crZLOwFnxPUEq4FFWSUCSv5XeHHQBpgZjBO2MJuDGcNv0GCQumIjVcQ==}
 
   '@ionic/core@8.7.2':
     resolution: {integrity: sha512-u1xTJHltvcwiHkwGowQ/uywiUmvszNeR4mXT5JSp1RH6npe8e9doIY9KSzKRrzpWu1T+H0bUwGbhaYg/I/poRA==}
@@ -1265,6 +1278,11 @@ packages:
 
   '@stencil/core@4.36.2':
     resolution: {integrity: sha512-PRFSpxNzX9Oi0Wfh02asztN9Sgev/MacfZwmd+VVyE6ZxW+a/kEpAYZhzGAmE+/aKVOGYuug7R9SulanYGxiDQ==}
+    engines: {node: '>=16.0.0', npm: '>=7.10.0'}
+    hasBin: true
+
+  '@stencil/core@4.38.0':
+    resolution: {integrity: sha512-oC3QFKO0X1yXVvETgc8OLY525MNKhn9vISBrbtKnGoPlokJ6rI8Vk1RK22TevnNrHLI4SExNLbcDnqilKR35JQ==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     hasBin: true
 
@@ -4768,6 +4786,8 @@ snapshots:
 
   '@eslint/js@9.33.0': {}
 
+  '@eslint/js@9.39.1': {}
+
   '@eslint/object-schema@2.1.6': {}
 
   '@eslint/plugin-kit@0.3.5':
@@ -4800,6 +4820,12 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+
+  '@ionic/core@8.7.11':
+    dependencies:
+      '@stencil/core': 4.38.0
+      ionicons: 8.0.13
+      tslib: 2.8.1
 
   '@ionic/core@8.7.2':
     dependencies:
@@ -5123,6 +5149,17 @@ snapshots:
   '@standard-schema/utils@0.3.0': {}
 
   '@stencil/core@4.36.2':
+    optionalDependencies:
+      '@rollup/rollup-darwin-arm64': 4.34.9
+      '@rollup/rollup-darwin-x64': 4.34.9
+      '@rollup/rollup-linux-arm64-gnu': 4.34.9
+      '@rollup/rollup-linux-arm64-musl': 4.34.9
+      '@rollup/rollup-linux-x64-gnu': 4.34.9
+      '@rollup/rollup-linux-x64-musl': 4.34.9
+      '@rollup/rollup-win32-arm64-msvc': 4.34.9
+      '@rollup/rollup-win32-x64-msvc': 4.34.9
+
+  '@stencil/core@4.38.0':
     optionalDependencies:
       '@rollup/rollup-darwin-arm64': 4.34.9
       '@rollup/rollup-darwin-x64': 4.34.9

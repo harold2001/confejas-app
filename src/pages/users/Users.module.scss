@@ -1,0 +1,86 @@
+.headerInputCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  ion-button {
+    align-self: center;
+  }
+}
+
+.titleCol {
+  text-align: center;
+}
+
+@media screen and (min-width: 764px) {
+  .headerInputCol {
+    justify-content: flex-end;
+  }
+
+  .titleCol {
+    text-align: left;
+  }
+}
+
+// Mobile View Styles
+.userCard {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.userCardHeader {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.userFullName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+  display: block;
+}
+
+.userInfo {
+  margin-bottom: 1rem;
+
+  .infoRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--ion-color-step-100);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      font-weight: 500;
+      color: var(--ion-color-medium);
+      flex: 0 0 auto;
+      margin-right: 1rem;
+    }
+
+    .value {
+      color: var(--ion-color-step-850);
+      text-align: right;
+      flex: 1;
+      word-break: break-word;
+    }
+  }
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ion-color-light);
+}

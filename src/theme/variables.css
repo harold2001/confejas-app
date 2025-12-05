@@ -1,5 +1,216 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+
+/** Ionic CSS Variables **/
+:root {
+  /** primary - Color principal basado en #1f2937 (gris azulado oscuro) **/
+  --ion-color-primary: #1f2937;
+  --ion-color-primary-rgb: 31, 41, 55;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #1b2430;
+  --ion-color-primary-tint: #35404b;
+
+  /** secondary - Azul grisáceo complementario **/
+  --ion-color-secondary: #374151;
+  --ion-color-secondary-rgb: 55, 65, 81;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #303947;
+  --ion-color-secondary-tint: #4b5563;
+
+  /** tertiary - Azul más claro para acentos **/
+  --ion-color-tertiary: #60a5fa;
+  --ion-color-tertiary-rgb: 96, 165, 250;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade: #5491dc;
+  --ion-color-tertiary-tint: #70aefb;
+
+  /** success - Verde para acciones exitosas **/
+  --ion-color-success: #10b981;
+  --ion-color-success-rgb: 16, 185, 129;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #0ea372;
+  --ion-color-success-tint: #28c094;
+
+  /** warning - Amarillo/naranja para advertencias **/
+  --ion-color-warning: #f59e0b;
+  --ion-color-warning-rgb: 245, 158, 11;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #d88b0a;
+  --ion-color-warning-tint: #f6a823;
+
+  /** danger - Rojo para acciones destructivas **/
+  --ion-color-danger: #ef4444;
+  --ion-color-danger-rgb: 239, 68, 68;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #d23c3c;
+  --ion-color-danger-tint: #f15757;
+
+  /** dark - Gris muy oscuro **/
+  --ion-color-dark: #111827;
+  --ion-color-dark-rgb: 17, 24, 39;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #0f1522;
+  --ion-color-dark-tint: #29303d;
+
+  /** medium - Gris medio **/
+  --ion-color-medium: #6b7280;
+  --ion-color-medium-rgb: 107, 114, 128;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #5e6470;
+  --ion-color-medium-tint: #7a808e;
+
+  /** light - Gris claro **/
+  --ion-color-light: #f3f4f6;
+  --ion-color-light-rgb: 243, 244, 246;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d6d7d8;
+  --ion-color-light-tint: #f4f5f7;
+
+  /** Colores de fondo y texto general **/
+  --ion-background-color: #111827;
+  --ion-background-color-rgb: 17, 24, 39;
+
+  --ion-text-color: #f9fafb;
+  --ion-text-color-rgb: 249, 250, 251;
+
+  --ion-color-step-50: #1a2332;
+  --ion-color-step-100: #232e3d;
+  --ion-color-step-150: #2c3948;
+  --ion-color-step-200: #354453;
+  --ion-color-step-250: #3e4f5e;
+  --ion-color-step-300: #475a69;
+  --ion-color-step-350: #506574;
+  --ion-color-step-400: #59707f;
+  --ion-color-step-450: #627b8a;
+  --ion-color-step-500: #6b8695;
+  --ion-color-step-550: #7491a0;
+  --ion-color-step-600: #7d9cab;
+  --ion-color-step-650: #86a7b6;
+  --ion-color-step-700: #8fb2c1;
+  --ion-color-step-750: #98bdcc;
+  --ion-color-step-800: #a1c8d7;
+  --ion-color-step-850: #aad3e2;
+  --ion-color-step-900: #b3deed;
+  --ion-color-step-950: #bce9f8;
+}
+
+/* Estilos globales para IonCard */
+ion-card {
+  --background: #1f2937;
+  --color: #ffffff;
+  background: #1f2937;
+  color: #ffffff;
+}
+
+ion-card-header,
+ion-card-content,
+ion-card-title,
+ion-card-subtitle {
+  --color: #ffffff;
+  color: #ffffff;
+}
+
+/* Estilos para botones - asegurar contraste adecuado */
+ion-button {
+  --color: var(--ion-color-primary-contrast);
+}
+
+/* Estilos para inputs - cambiar color de focus */
+ion-input {
+  --highlight-color-focused: var(--ion-color-primary-contrast);
+  --highlight-color-valid: var(--ion-color-success);
+  --highlight-color-invalid: var(--ion-color-danger);
+}
+
+ion-item {
+  --highlight-color-focused: var(--ion-color-primary-contrast);
+  --highlight-color-valid: var(--ion-color-success);
+  --highlight-color-invalid: var(--ion-color-danger);
+  --border-color: var(--ion-color-medium);
+  --highlight-background: transparent;
+}
+
+/* Sobrescribir el color de borde en focus para inputs con fill='outline' */
+ion-input[fill='outline'] {
+  --highlight-color: var(--ion-color-primary-contrast) !important;
+}
+
+/* Estilos para IonSelect - hacer que el popover/alert tenga el color de las cards */
+ion-select {
+  --highlight-color-focused: var(--ion-color-primary-contrast);
+}
+
+/* Estilos para el popover del select */
+ion-popover.select-popover {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+ion-popover.select-popover ion-list {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+}
+
+ion-popover.select-popover ion-item {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+  --background-hover: var(--ion-color-primary-shade);
+  --background-activated: var(--ion-color-primary-shade);
+}
+
+ion-popover.select-popover ion-radio {
+  --color: var(--ion-color-primary-contrast);
+  --color-checked: var(--ion-color-tertiary);
+}
+
+/* Estilos para el alert del select (mobile) */
+ion-alert.select-alert .alert-wrapper {
+  background: var(--ion-color-primary);
+}
+
+ion-alert.select-alert .alert-title,
+ion-alert.select-alert .alert-message,
+ion-alert.select-alert .alert-radio-label,
+ion-alert.select-alert .alert-checkbox-label {
+  color: var(--ion-color-primary-contrast);
+}
+
+ion-alert.select-alert .alert-radio-icon {
+  border-color: var(--ion-color-primary-contrast);
+}
+
+ion-alert.select-alert [aria-checked='true'].alert-radio-button .alert-radio-icon {
+  border-color: var(--ion-color-tertiary);
+  background: var(--ion-color-tertiary);
+}
+
+ion-alert.select-alert .alert-button {
+  color: var(--ion-color-tertiary);
+}
+
+/* Estilos para action sheet del select */
+ion-action-sheet.select-action-sheet {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+ion-action-sheet.select-action-sheet .action-sheet-button {
+  color: var(--ion-color-primary-contrast);
+}
+
+ion-action-sheet.select-action-sheet .action-sheet-selected {
+  background: var(--ion-color-primary-shade);
+}
+
 .table-container {
   background: var(--surface-card);
   padding: 1rem 2rem;

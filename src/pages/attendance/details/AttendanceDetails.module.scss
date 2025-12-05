@@ -1,0 +1,123 @@
+.attendance-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .back-button {
+    margin-bottom: 1rem;
+  }
+
+  .info-row {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--ion-color-light);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.margin-bottom {
+      margin-bottom: 1rem;
+    }
+
+    .info-label {
+      padding-bottom: 0.25rem;
+
+      @media (min-width: 768px) {
+        padding-bottom: 0;
+      }
+
+      span {
+        color: var(--ion-color-medium);
+      }
+    }
+
+    .info-value {
+      word-break: break-word;
+
+      p {
+        margin: 0;
+      }
+
+      .highlighted {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--ion-color-light);
+      }
+
+      .normal {
+        font-size: 1rem;
+        font-weight: 400;
+      }
+    }
+  }
+
+  .header-card {
+    .roles-container {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .attendance-toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 0;
+
+      .status-text {
+        margin-left: 0.5rem;
+
+        &.present {
+          color: var(--ion-color-success);
+        }
+
+        &.absent {
+          color: var(--ion-color-medium);
+        }
+      }
+    }
+  }
+
+  .room-details-separator {
+    margin: 1rem 0;
+    border-color: var(--ion-color-medium);
+  }
+
+  .room-item {
+    &:not(:last-child) {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .notes-content {
+    white-space: pre-wrap;
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .chip-large {
+    font-size: 1.1rem;
+  }
+
+  .chip-normal {
+    font-size: 0.875rem;
+  }
+
+  ion-card {
+    margin-bottom: 1rem;
+  }
+
+  ion-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  ion-chip {
+    margin: 0;
+  }
+}

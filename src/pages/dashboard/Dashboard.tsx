@@ -11,7 +11,7 @@ import {
   IonCol,
   IonText,
 } from '@ionic/react';
-import { personAddOutline, scanOutline, searchOutline } from 'ionicons/icons';
+import { personAddOutline, searchOutline } from 'ionicons/icons';
 import styles from './Dashboard.module.scss';
 import { ROUTES } from '../../constants/routes';
 import usePlatform from '../../hooks/usePlatform';
@@ -38,14 +38,20 @@ const Dashboard = () => {
                   routerLink={ROUTES.CREATE_USER}
                   className={styles.actionButton}
                 >
-                  <IonIcon aria-hidden='true' slot='start' icon={personAddOutline} className={styles.icon} />
-                  <IonText>
+                  <IonIcon
+                    color='light'
+                    aria-hidden='true'
+                    slot='start'
+                    icon={personAddOutline}
+                    className={styles.icon}
+                  />
+                  <IonText color='light'>
                     <span>Registrar Nuevo Participante</span>
                   </IonText>
                 </IonButton>
               </IonCol>
 
-              <IonCol>
+              {/* <IonCol>
                 <IonButton
                   fill='clear'
                   type='button'
@@ -53,12 +59,12 @@ const Dashboard = () => {
                   routerLink={ROUTES.SCAN_USER}
                   className={styles.actionButton}
                 >
-                  <IonIcon aria-hidden='true' slot='start' icon={scanOutline} className={styles.icon} />
-                  <IonText>
+                  <IonIcon color='light' aria-hidden='true' slot='start' icon={scanOutline} className={styles.icon} />
+                  <IonText color='light'>
                     <span>Escanear QR</span>
                   </IonText>
                 </IonButton>
-              </IonCol>
+              </IonCol> */}
 
               <IonCol>
                 <IonButton
@@ -68,8 +74,8 @@ const Dashboard = () => {
                   routerLink={ROUTES.USERS}
                   className={styles.actionButton}
                 >
-                  <IonIcon aria-hidden='true' slot='start' icon={searchOutline} className={styles.icon} />
-                  <IonText>
+                  <IonIcon color='light' aria-hidden='true' slot='start' icon={searchOutline} className={styles.icon} />
+                  <IonText color='light'>
                     <span>Consultar participantes</span>
                   </IonText>
                 </IonButton>

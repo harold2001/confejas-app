@@ -1,0 +1,33 @@
+.suggestionsContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--ion-background-color);
+  border: 1px solid var(--ion-border-color);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestionItem {
+  --min-height: 40px;
+  cursor: pointer;
+}
+
+.suggestionItemNormal {
+  --background: transparent;
+  --background-hover: var(--ion-color-light);
+}
+
+.suggestionItemSelected {
+  --background: var(--ion-color-primary-tint);
+  --background-hover: var(--ion-color-primary-shade);
+}
+
+.inputContainer {
+  position: relative;
+}

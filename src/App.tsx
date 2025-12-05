@@ -39,8 +39,10 @@ import '@ionic/react/css/palettes/dark.always.css';
 import './theme/variables.css';
 import Users from './pages/users/Users';
 import { ROUTES } from './constants/routes';
-import ConfirmAttendance from './pages/attendance/ConfirmAttendance';
+import ConfirmAttendance from './pages/attendance/confirm/ConfirmAttendance';
 import UserDetails from './pages/users/details/UserDetails';
+import Attendance from './pages/attendance/Attendance';
+import AttendanceDetails from './pages/attendance/details/AttendanceDetails';
 
 setupIonicReact();
 
@@ -83,36 +85,14 @@ const App = () => {
             </Route>
 
             {/* Protected Routes */}
-            <ProtectedRoute
-              path={ROUTES.DASHBOARD}
-              exact={true}
-              component={Dashboard}
-            />
-            <ProtectedRoute
-              path={ROUTES.USERS}
-              exact={true}
-              component={Users}
-            />
-            <ProtectedRoute
-              path={ROUTES.CREATE_USER}
-              exact={true}
-              component={UserDetails}
-            />
-            <ProtectedRoute
-              path={ROUTES.EDIT_USER}
-              exact={true}
-              component={UserDetails}
-            />
-            <ProtectedRoute
-              path={ROUTES.PROFILE}
-              exact={true}
-              component={Profile}
-            />
-            <ProtectedRoute
-              path={ROUTES.CONFIRM_ATTENDANCE}
-              exact={true}
-              component={ConfirmAttendance}
-            />
+            <ProtectedRoute path={ROUTES.DASHBOARD} exact={true} component={Dashboard} />
+            <ProtectedRoute path={ROUTES.USERS} exact={true} component={Users} />
+            <ProtectedRoute path={ROUTES.CREATE_USER} exact={true} component={UserDetails} />
+            <ProtectedRoute path={ROUTES.EDIT_USER} exact={true} component={UserDetails} />
+            <ProtectedRoute path={ROUTES.PROFILE} exact={true} component={Profile} />
+            <ProtectedRoute path={ROUTES.ATTENDANCE_DETAILS} exact={true} component={AttendanceDetails} />
+            <ProtectedRoute path={ROUTES.CONFIRM_ATTENDANCE} exact={true} component={ConfirmAttendance} />
+            <ProtectedRoute path={ROUTES.ATTENDANCE} exact={true} component={Attendance} />
             {/* Add more protected routes here:
             <ProtectedRoute path='/settings' exact={true} component={Settings} />
             <ProtectedRoute path='/users' exact={true} component={Users} />

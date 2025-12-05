@@ -2,6 +2,7 @@ import { BaseInterface } from './base.interface';
 import { IRole } from './role.interface';
 import { IStake } from './stake.interface';
 import { IUserRoom } from './user-room.interface';
+import { ICompany } from './company.interface';
 
 export interface IUser extends BaseInterface {
   firstName: string;
@@ -19,9 +20,11 @@ export interface IUser extends BaseInterface {
   department?: string;
   hasArrived: boolean;
   medicalCondition?: string;
+  dietaryRestriction?: string;
   keyCode?: string;
   ward?: string;
   stake?: IStake;
+  company?: ICompany;
   age?: string;
   isMemberOfTheChurch?: boolean;
   notes?: string;

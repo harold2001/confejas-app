@@ -6,15 +6,10 @@ import {
   IonCardTitle,
   IonCol,
   IonContent,
-  IonInput,
-  IonItem,
   IonLabel,
   IonPage,
   IonRow,
-  IonSelect,
-  IonSelectOption,
   IonSpinner,
-  IonTextarea,
   IonToggle,
   IonDatetime,
   IonIcon,
@@ -22,11 +17,10 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { useIonRouter } from '@ionic/react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
-import toast from 'react-hot-toast';
-import { getUserById, createUser, updateUser } from '../../../api/users.api';
+import { getUserById } from '../../../api/users.api';
 import QUERY_KEYS from '../../../constants/query-keys';
 import {
   createUserSchema,
@@ -39,14 +33,23 @@ import { getStakes } from '../../../api/stakes.api';
 import { getRoles } from '../../../api/roles.api';
 import { ROLES } from '../../../constants/roles';
 import { arrowBackOutline } from 'ionicons/icons';
+import { useUser } from '../../../hooks/useUser';
+import usePlatform from '../../../hooks/usePlatform';
+import InputValidated from '../../../components/Input/InputValidated';
+import PhoneInputValidated from '../../../components/Input/PhoneInputValidated';
+import TextareaValidated from '../../../components/Input/TextareaValidated';
+import SelectValidated from '../../../components/Input/SelectValidated';
 import styles from './UserDetails.module.scss';
+import { CreateUserDto } from '../../../interfaces/dto/create-user.dto';
 
 const UserDetails = () => {
   const { id } = useParams<{ id: string }>();
   const router = useIonRouter();
   const isEditMode = !!id;
+  const { saveUser } = useUser();
+  const { isDesktop } = usePlatform();
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: [QUERY_KEYS.GET_USER_BY_ID, id],
     queryFn: () => getUserById(id!),
     enabled: isEditMode,
@@ -57,17 +60,12 @@ const UserDetails = () => {
     queryFn: getStakes,
   });
 
-  const { data: roles, isLoading: rolesLoading } = useQuery({
+  const { data: roles } = useQuery({
     queryKey: [QUERY_KEYS.GET_ROLES],
     queryFn: getRoles,
   });
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<CreateUserFormData | UpdateUserFormData>({
+  const methods = useForm<CreateUserFormData | UpdateUserFormData>({
     resolver: zodResolver(isEditMode ? updateUserSchema : createUserSchema),
     defaultValues: {
       firstName: '',
@@ -90,6 +88,13 @@ const UserDetails = () => {
       notes: '',
     },
   });
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = methods;
 
   // Populate form with user data when loaded (edit mode)
   useEffect(() => {
@@ -119,12 +124,6 @@ const UserDetails = () => {
     }
   }, [data, reset, isEditMode]);
 
-  useEffect(() => {
-    if (error) {
-      toast.error('Error al cargar los datos del usuario');
-    }
-  }, [error]);
-
   const onSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
     try {
       if (isEditMode) {
@@ -133,14 +132,12 @@ const UserDetails = () => {
           ...(formData as UpdateUserFormData),
           birthDate: formData.birthDate ? new Date(formData.birthDate) : undefined,
         };
-        await updateUser(updateData as any);
-        toast.success('Usuario actualizado correctamente');
-        refetch();
+        await saveUser(updateData);
+        await refetch();
       } else {
         // Create new user - find Participant role ID
         const participantRole = roles?.find((role) => role.name === ROLES.PARTICIPANT);
         if (!participantRole) {
-          toast.error('No se pudo encontrar el rol de Participante');
           return;
         }
 
@@ -151,32 +148,19 @@ const UserDetails = () => {
           roleIds: [participantRole.id], // Use Participant role ID
         };
 
-        await createUser(createData as any);
-        toast.success('Usuario creado correctamente');
+        await saveUser(createData as CreateUserDto);
         router.push(ROUTES.USERS, 'back', 'replace');
       }
-    } catch (err) {
-      console.error('Error saving user:', err);
-      toast.error(isEditMode ? 'Error al actualizar el usuario' : 'Error al crear el usuario');
+    } catch {
+      // Error handling is done by useUser hook
     }
-  };
-
-  const onError = () => {
-    toast.error('Por favor, corrija los errores en el formulario.');
   };
 
   if (isLoading) {
     return (
       <IonPage>
         <IonContent className='ion-padding'>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
-            }}
-          >
+          <div className={styles.loadingContainer}>
             <IonSpinner name='crescent' />
           </div>
         </IonContent>
@@ -189,250 +173,171 @@ const UserDetails = () => {
       <IonContent className='ion-padding'>
         <IonRow>
           <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2' className={styles.headerCol}>
-            <IonButton routerLink={ROUTES.USERS} fill='clear' type='button' color='dark'>
-              <IonIcon icon={arrowBackOutline} slot='icon-only' aria-hidden='true' />
+            <IonButton routerLink={ROUTES.USERS} fill='clear' type='button' className={styles.backButton}>
+              <IonIcon icon={arrowBackOutline} slot='start' />
+              Volver
             </IonButton>
             <h1 className='ion-no-margin'>{isEditMode ? 'Editar Usuario' : 'Crear Usuario'}</h1>
           </IonCol>
         </IonRow>
         <IonRow>
           <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2'>
-            <form onSubmit={handleSubmit(onSubmit, onError)}>
-              {/* Personal Information Section */}
-              <IonCard>
-                <IonCardHeader>
-                  <IonCardTitle>Información Personal</IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonRow>
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>
-                          Nombre <span style={{ color: 'red' }}>*</span>
-                        </IonLabel>
-                        <Controller
-                          name='firstName'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el nombre' />}
-                        />
-                      </IonItem>
-                      {errors.firstName && <p style={{ color: 'red', fontSize: '12px' }}>{errors.firstName.message}</p>}
-                    </IonCol>
+            <FormProvider {...methods}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {/* Personal Information Section */}
+                <IonCard>
+                  <IonCardHeader>
+                    <IonCardTitle>Información Personal</IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonRow>
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated name='firstName' label='Nombre' placeholder='Ingrese el nombre' required />
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Segundo Nombre</IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
                           name='middleName'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el segundo nombre' />}
+                          label='Segundo Nombre'
+                          placeholder='Ingrese el segundo nombre'
+                          required={false}
                         />
-                      </IonItem>
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>
-                          Apellido Paterno <span style={{ color: 'red' }}>*</span>
-                        </IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
                           name='paternalLastName'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el apellido paterno' />}
+                          label='Apellido Paterno'
+                          placeholder='Ingrese el apellido paterno'
+                          required
                         />
-                      </IonItem>
-                      {errors.paternalLastName && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>{errors.paternalLastName.message}</p>
-                      )}
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Apellido Materno</IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
                           name='maternalLastName'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el apellido materno' />}
+                          label='Apellido Materno'
+                          placeholder='Ingrese el apellido materno'
+                          required={false}
                         />
-                      </IonItem>
-                      {errors.maternalLastName && (
-                        <p style={{ color: 'red', fontSize: '12px' }}>{errors.maternalLastName.message}</p>
-                      )}
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>DNI</IonLabel>
-                        <Controller
-                          name='dni'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el DNI' />}
-                        />
-                      </IonItem>
-                    </IonCol>
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated name='dni' label='DNI' placeholder='Ingrese el DNI' required={false} />
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Género</IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <SelectValidated
                           name='gender'
-                          control={control}
-                          render={({ field }) => (
-                            <IonSelect
-                              value={field.value}
-                              onIonChange={(e) => field.onChange(e.detail.value)}
-                              placeholder='Seleccione el género'
-                              required={false}
-                            >
-                              <IonSelectOption value='Varón'>Varón</IonSelectOption>
-                              <IonSelectOption value='Mujer'>Mujer</IonSelectOption>
-                            </IonSelect>
-                          )}
+                          label='Género'
+                          placeholder='Seleccione el género'
+                          options={[
+                            { label: 'Varón', value: 'Varón' },
+                            { label: 'Mujer', value: 'Mujer' },
+                          ]}
+                          isDesktopBoolean={isDesktop()}
+                          interface='action-sheet'
+                          required={false}
                         />
-                      </IonItem>
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
+                      <IonCol size='12' sizeMd='6'>
                         <IonLabel position='stacked'>Fecha de Nacimiento</IonLabel>
                         <Controller
                           name='birthDate'
                           control={control}
                           render={({ field }) => <IonDatetime {...field} presentation='date' />}
                         />
-                      </IonItem>
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Edad</IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
                           name='age'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} type='number' placeholder='Ingrese la edad' />}
+                          label='Edad'
+                          type='number'
+                          placeholder='Ingrese la edad'
+                          required={false}
                         />
-                      </IonItem>
-                      {errors.age && <p style={{ color: 'red', fontSize: '12px' }}>{errors.age.message}</p>}
-                    </IonCol>
-                  </IonRow>
-                </IonCardContent>
-              </IonCard>
+                      </IonCol>
+                    </IonRow>
+                  </IonCardContent>
+                </IonCard>
 
-              {/* Contact Information Section */}
-              <IonCard>
-                <IonCardHeader>
-                  <IonCardTitle>Información de Contacto</IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonRow>
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Email</IonLabel>
-                        <Controller
+                {/* Contact Information Section */}
+                <IonCard>
+                  <IonCardHeader>
+                    <IonCardTitle>Información de Contacto</IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonRow>
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
                           name='email'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} type='email' placeholder='ejemplo@correo.com' />}
+                          label='Email'
+                          type='email'
+                          placeholder='ejemplo@correo.com'
+                          required={false}
                         />
-                      </IonItem>
-                      {errors.email && <p style={{ color: 'red', fontSize: '12px' }}>{errors.email.message}</p>}
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Teléfono</IonLabel>
-                        <Controller
-                          name='phone'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} type='tel' placeholder='Ingrese el teléfono' />}
-                        />
-                      </IonItem>
-                    </IonCol>
+                      <IonCol size='12' sizeMd='6'>
+                        <PhoneInputValidated name='phone' label='Teléfono' required={false} />
+                      </IonCol>
 
-                    <IonCol size='12'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Dirección</IonLabel>
-                        <Controller
+                      <IonCol size='12'>
+                        <TextareaValidated
                           name='address'
-                          control={control}
-                          render={({ field }) => <IonTextarea {...field} placeholder='Ingrese la dirección' rows={2} />}
+                          label='Dirección'
+                          placeholder='Ingrese la dirección'
+                          rows={2}
+                          required={false}
                         />
-                      </IonItem>
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Región</IonLabel>
-                        <Controller
-                          name='region'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese la región' />}
-                        />
-                      </IonItem>
-                    </IonCol>
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated name='region' label='Región' placeholder='Ingrese la región' required={false} />
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Departamento</IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
                           name='department'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el departamento' />}
+                          label='Departamento'
+                          placeholder='Ingrese el departamento'
+                          required={false}
                         />
-                      </IonItem>
-                    </IonCol>
-                  </IonRow>
-                </IonCardContent>
-              </IonCard>
+                      </IonCol>
+                    </IonRow>
+                  </IonCardContent>
+                </IonCard>
 
-              {/* Church Information Section */}
-              <IonCard>
-                <IonCardHeader>
-                  <IonCardTitle>Información Eclesiástica</IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonRow>
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Barrio</IonLabel>
-                        <Controller
-                          name='ward'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el barrio' />}
-                        />
-                      </IonItem>
-                      {errors.ward && <p style={{ color: 'red', fontSize: '12px' }}>{errors.ward.message}</p>}
-                    </IonCol>
+                {/* Church Information Section */}
+                <IonCard>
+                  <IonCardHeader>
+                    <IonCardTitle>Información Eclesiástica</IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonRow>
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated name='ward' label='Barrio' placeholder='Ingrese el barrio' required={false} />
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Estaca</IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <SelectValidated
                           name='stakeId'
-                          control={control}
-                          render={({ field }) => (
-                            <IonSelect
-                              value={field.value}
-                              onIonChange={(e) => field.onChange(e.detail.value)}
-                              placeholder='Seleccione una estaca'
-                            >
-                              {stakesLoading ? (
-                                <IonSelectOption value=''>Cargando...</IonSelectOption>
-                              ) : (
-                                stakes?.map((stake) => (
-                                  <IonSelectOption key={stake.id} value={stake.id}>
-                                    {stake.name}
-                                  </IonSelectOption>
-                                ))
-                              )}
-                            </IonSelect>
-                          )}
+                          label='Estaca'
+                          placeholder='Seleccione una estaca'
+                          options={
+                            stakesLoading
+                              ? [{ label: 'Cargando...', value: '' }]
+                              : stakes?.map((stake) => ({ label: stake.name, value: stake.id })) || []
+                          }
+                          isDesktopBoolean={isDesktop()}
+                          interface='action-sheet'
+                          required={false}
                         />
-                      </IonItem>
-                      {errors.stakeId && <p style={{ color: 'red', fontSize: '12px' }}>{errors.stakeId.message}</p>}
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12'>
-                      <IonItem>
+                      <IonCol size='12'>
                         <IonLabel>¿Es miembro de la iglesia?</IonLabel>
                         <Controller
                           name='isMemberOfTheChurch'
@@ -441,88 +346,76 @@ const UserDetails = () => {
                             <IonToggle checked={field.value} onIonChange={(e) => field.onChange(e.detail.checked)} />
                           )}
                         />
-                      </IonItem>
-                    </IonCol>
-                  </IonRow>
-                </IonCardContent>
-              </IonCard>
+                      </IonCol>
+                    </IonRow>
+                  </IonCardContent>
+                </IonCard>
 
-              {/* Additional Information Section */}
-              <IonCard>
-                <IonCardHeader>
-                  <IonCardTitle>Información Adicional</IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonRow>
-                    <IonCol size='12'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Condición Médica</IonLabel>
-                        <Controller
+                {/* Additional Information Section */}
+                <IonCard>
+                  <IonCardHeader>
+                    <IonCardTitle>Información Adicional</IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonRow>
+                      <IonCol size='12'>
+                        <TextareaValidated
                           name='medicalCondition'
-                          control={control}
-                          render={({ field }) => (
-                            <IonTextarea {...field} placeholder='Ingrese alguna condición médica importante' rows={3} />
-                          )}
+                          label='Condición Médica'
+                          placeholder='Ingrese alguna condición médica importante'
+                          rows={3}
+                          required={false}
                         />
-                      </IonItem>
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Notas / Taller Propuesto</IonLabel>
-                        <Controller
+                      <IonCol size='12'>
+                        <TextareaValidated
                           name='notes'
-                          control={control}
-                          render={({ field }) => (
-                            <IonTextarea
-                              {...field}
-                              placeholder='Ingrese notas adicionales o taller que le gustaría aprender'
-                              rows={3}
-                            />
-                          )}
+                          label='Notas / Taller Propuesto'
+                          placeholder='Ingrese notas adicionales o taller que le gustaría aprender'
+                          rows={3}
+                          required={false}
                         />
-                      </IonItem>
-                    </IonCol>
+                      </IonCol>
 
-                    <IonCol size='12' sizeMd='6'>
-                      <IonItem>
-                        <IonLabel position='stacked'>Código de Llave</IonLabel>
-                        <Controller
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
                           name='keyCode'
-                          control={control}
-                          render={({ field }) => <IonInput {...field} placeholder='Ingrese el código de llave' />}
+                          label='Código de Llave'
+                          placeholder='Ingrese el código de llave'
+                          required={false}
                         />
-                      </IonItem>
-                    </IonCol>
-                  </IonRow>
-                </IonCardContent>
-              </IonCard>
+                      </IonCol>
+                    </IonRow>
+                  </IonCardContent>
+                </IonCard>
 
-              {/* Action Buttons */}
-              <IonRow className='ion-margin-top'>
-                <IonCol size='12' sizeMd='6'>
-                  <IonButton
-                    expand='block'
-                    color='medium'
-                    onClick={() => router.push(ROUTES.USERS, 'back')}
-                    disabled={isSubmitting}
-                  >
-                    Cancelar
-                  </IonButton>
-                </IonCol>
-                <IonCol size='12' sizeMd='6'>
-                  <IonButton expand='block' type='submit' disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <IonSpinner name='crescent' />
-                    ) : isEditMode ? (
-                      'Actualizar Usuario'
-                    ) : (
-                      'Crear Usuario'
-                    )}
-                  </IonButton>
-                </IonCol>
-              </IonRow>
-            </form>
+                {/* Action Buttons */}
+                <IonRow className='ion-margin-top'>
+                  <IonCol size='12' sizeMd='6'>
+                    <IonButton
+                      expand='block'
+                      color='medium'
+                      onClick={() => router.push(ROUTES.USERS, 'back')}
+                      disabled={isSubmitting}
+                    >
+                      Cancelar
+                    </IonButton>
+                  </IonCol>
+                  <IonCol size='12' sizeMd='6'>
+                    <IonButton expand='block' type='submit' color='success' disabled={isSubmitting}>
+                      {isSubmitting ? (
+                        <IonSpinner name='crescent' />
+                      ) : isEditMode ? (
+                        'Actualizar Usuario'
+                      ) : (
+                        'Crear Usuario'
+                      )}
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+              </form>
+            </FormProvider>
           </IonCol>
         </IonRow>
       </IonContent>

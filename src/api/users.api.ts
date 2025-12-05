@@ -1,6 +1,7 @@
 import API_BASE_ROUTES from '../constants/api-base-routes';
 import { CreateUserDto } from '../interfaces/dto/create-user.dto';
 import { FilterUserDto } from '../interfaces/dto/filter-user.dto';
+import { MarkAsArrivedDto } from '../interfaces/dto/mark-as-arrived.dto';
 import { PaginationDto } from '../interfaces/dto/pagination.dto';
 import { UpdateUserDto } from '../interfaces/dto/update-user.dto';
 import { IUser } from '../interfaces/user.interface';
@@ -39,7 +40,7 @@ export const updateUser = async (body: UpdateUserDto): Promise<IUser> => {
   return res.data;
 };
 
-export const markAsArrived = async (id: string): Promise<IUser> => {
-  const res = await axiosApi.put(`${route}/arrived/${id}`);
+export const markAsArrived = async (id: string, body: MarkAsArrivedDto): Promise<IUser> => {
+  const res = await axiosApi.put(`${route}/arrived/${id}`, body);
   return res.data;
 };

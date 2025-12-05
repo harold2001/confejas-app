@@ -1,12 +1,9 @@
 import {
   IonButton,
   IonContent,
-  IonHeader,
   IonInput,
   IonPage,
   IonText,
-  IonTitle,
-  IonToolbar,
   IonSpinner,
   IonItem,
   IonLabel,
@@ -25,7 +22,7 @@ import styles from './Login.module.scss';
 
 const Login = () => {
   const router = useIonRouter();
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated());
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
   const { login, isLoading } = useAuth();
 
   const {
@@ -57,10 +54,10 @@ const Login = () => {
         <IonGrid className={`ion-padding ${styles.gridContainer}`}>
           <IonRow>
             <IonCol>
-              <IonText color='primary'>
+              <IonText color='light'>
                 <h1 className='text-3xl font-bold'>Sistema de Asistencia</h1>
               </IonText>
-              <IonText color='medium'>
+              <IonText color='light'>
                 <p className='mt-2'>Inicia sesión para continuar</p>
               </IonText>
             </IonCol>
@@ -79,7 +76,7 @@ const Login = () => {
                         {...field}
                         type='email'
                         placeholder='Ingrese su correo electrónico'
-                        onIonInput={e => field.onChange(e.detail.value)}
+                        onIonInput={(e) => field.onChange(e.detail.value)}
                       />
                     )}
                   />
@@ -104,7 +101,7 @@ const Login = () => {
                         {...field}
                         type='password'
                         placeholder='Ingrese su contraseña'
-                        onIonInput={e => field.onChange(e.detail.value)}
+                        onIonInput={(e) => field.onChange(e.detail.value)}
                       />
                     )}
                   />
@@ -138,10 +135,7 @@ const Login = () => {
               <IonText color='medium'>
                 <p className='text-sm'>
                   ¿No tienes una cuenta?{' '}
-                  <a
-                    href='/auth/register'
-                    className='text-blue-500 hover:underline'
-                  >
+                  <a href='/auth/register' className='text-blue-500 hover:underline'>
                     Regístrate
                   </a>
                 </p>

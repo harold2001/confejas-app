@@ -3,28 +3,23 @@ import toast from 'react-hot-toast';
 import { createUser, markAsArrived, updateUser } from '../api/users.api';
 import { CreateUserDto } from '../interfaces/dto/create-user.dto';
 import { UpdateUserDto } from '../interfaces/dto/update-user.dto';
+import { MarkAsArrivedDto } from '../interfaces/dto/mark-as-arrived.dto';
 
 export const useUser = () => {
   const markAsArrivedMutation = useMutation({
-    mutationFn: markAsArrived,
-    onSuccess: async data => {
-      toast.success(
-        `Asistencia del participante ${data?.firstName} ${data?.paternalLastName} registrada.`
-      );
+    mutationFn: ({ id, body }: { id: string; body: MarkAsArrivedDto }) => markAsArrived(id, body),
+    onSuccess: async (data) => {
+      toast.success(`Asistencia del participante ${data?.firstName} ${data?.paternalLastName} modificada.`);
     },
     onError: (error: Error) => {
-      toast.error(
-        error.message || 'Error al registrar la asistencia del participante'
-      );
+      toast.error(error.message || 'Error al registrar la asistencia del participante');
     },
   });
 
   const createUserMutation = useMutation({
     mutationFn: createUser,
-    onSuccess: async data => {
-      toast.success(
-        `Participante ${data?.firstName} ${data?.paternalLastName} creado.`
-      );
+    onSuccess: async (data) => {
+      toast.success(`Participante ${data?.firstName} ${data?.paternalLastName} creado.`);
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al crear participante');
@@ -33,15 +28,11 @@ export const useUser = () => {
 
   const updateUserMutation = useMutation({
     mutationFn: updateUser,
-    onSuccess: async data => {
-      toast.success(
-        `Datos del participante ${data?.firstName} ${data?.paternalLastName} actualizados.`
-      );
+    onSuccess: async (data) => {
+      toast.success(`Datos del participante ${data?.firstName} ${data?.paternalLastName} actualizados.`);
     },
     onError: (error: Error) => {
-      toast.error(
-        error.message || 'Error al actualizar los datos del participante'
-      );
+      toast.error(error.message || 'Error al actualizar los datos del participante');
     },
   });
 

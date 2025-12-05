@@ -4,7 +4,7 @@ import Menu from '../components/Menu/Menu';
 
 interface ProtectedRouteConfig {
   path: string;
-  component: React.ComponentType<any>;
+  component: React.ComponentType<unknown>;
   exact?: boolean;
 }
 
@@ -27,12 +27,7 @@ const ProtectedLayout: React.FC<ProtectedLayoutProps> = ({ routes }) => {
       <Menu />
       <IonRouterOutlet id='protected'>
         {routes.map((route, index) => (
-          <ProtectedRoute
-            key={index}
-            path={route.path}
-            exact={route.exact ?? true}
-            component={route.component}
-          />
+          <ProtectedRoute key={index} path={route.path} exact={route.exact ?? true} component={route.component} />
         ))}
       </IonRouterOutlet>
     </IonSplitPane>

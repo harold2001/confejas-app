@@ -14,7 +14,7 @@ let failedQueue: Array<{
 }> = [];
 
 const processQueue = (error: unknown, token: string | null = null) => {
-  failedQueue.forEach(prom => {
+  failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
@@ -24,34 +24,36 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = [];
 };
 
-axiosApi.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig<unknown>) => {
-    const { value: token } = await Preferences.get({ key: 'accessToken' });
-    if (token) {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+axiosApi.interceptors.request.use(async (config: InternalAxiosRequestConfig<unknown>) => {
+  const { value: token } = await Preferences.get({ key: 'accessToken' });
+  if (token) {
+    // eslint-disable-next-line no-param-reassign
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
 axiosApi.interceptors.response.use(
-  response => response,
-  async error => {
+  (response) => response,
+  async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest.retryAttempt) {
+    // Skip token refresh logic for login and auth endpoints
+    const isAuthEndpoint =
+      originalRequest.url?.includes('/auth/login') || originalRequest.url?.includes('/auth/register');
+
+    if (error.response?.status === 401 && !originalRequest.retryAttempt && !isAuthEndpoint) {
       originalRequest.retryAttempt = true;
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then(token => {
+          .then((token) => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
             return axiosApi(originalRequest);
           })
-          .catch(err => Promise.reject(err));
+          .catch((err) => Promise.reject(err));
       }
 
       isRefreshing = true;
@@ -78,7 +80,7 @@ axiosApi.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosApi;
