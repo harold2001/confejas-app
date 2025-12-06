@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { createUser, markAsArrived, updateUser } from '../api/users.api';
+import { createUser, markAsArrived, updateUser, permutaUser } from '../api/users.api';
 import { CreateUserDto } from '../interfaces/dto/create-user.dto';
 import { UpdateUserDto } from '../interfaces/dto/update-user.dto';
 import { MarkAsArrivedDto } from '../interfaces/dto/mark-as-arrived.dto';
@@ -36,6 +36,16 @@ export const useUser = () => {
     },
   });
 
+  const permutaUserMutation = useMutation({
+    mutationFn: permutaUser,
+    onSuccess: async (data) => {
+      toast.success(`Permuta realizada. Nuevo participante: ${data?.firstName} ${data?.paternalLastName}`);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al realizar la permuta');
+    },
+  });
+
   const saveUser = async (user: CreateUserDto | UpdateUserDto) => {
     if ('id' in user) {
       return updateUserMutation.mutateAsync(user);
@@ -47,5 +57,6 @@ export const useUser = () => {
   return {
     markAsArrived: markAsArrivedMutation.mutateAsync,
     saveUser: saveUser,
+    permutaUser: permutaUserMutation.mutateAsync,
   };
 };

@@ -12,7 +12,16 @@ import InputValidated from './InputValidated';
 
 // Format phone for Peru: 9xx xxx xxx (9 digits)
 const formatPeruPhone = (value: string): string => {
-  const digits = value?.replace(/\D/g, '') ?? '';
+  let digits = value?.replace(/\D/g, '') ?? '';
+
+  // Remove Peru country code (51) if present and number starts with 9
+  if (digits.startsWith('51') && digits.length > 9) {
+    const withoutCountryCode = digits.slice(2);
+    if (withoutCountryCode.startsWith('9')) {
+      digits = withoutCountryCode;
+    }
+  }
+
   if (digits.length === 0) return '';
   if (digits.length <= 3) return digits;
   if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`;
@@ -66,7 +75,17 @@ const PhoneInputComponent = <T extends FieldValues>(
 
   const updatePhoneValue = useCallback(
     (rawValue: string) => {
-      const digitsOnly = rawValue?.replace(/\D/g, '')?.slice(0, 9);
+      let digitsOnly = rawValue?.replace(/\D/g, '') ?? '';
+
+      // Remove Peru country code (51) if present and number starts with 9
+      if (digitsOnly.startsWith('51') && digitsOnly.length > 9) {
+        const withoutCountryCode = digitsOnly.slice(2);
+        if (withoutCountryCode.startsWith('9')) {
+          digitsOnly = withoutCountryCode;
+        }
+      }
+
+      digitsOnly = digitsOnly.slice(0, 9);
 
       setValue(name, digitsOnly as PathValue<T, Path<T>>, {
         shouldTouch: true,

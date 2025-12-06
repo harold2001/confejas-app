@@ -103,22 +103,6 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-step-950: #bce9f8;
 }
 
-/* Estilos globales para IonCard */
-ion-card {
-  --background: #1f2937;
-  --color: #ffffff;
-  background: #1f2937;
-  color: #ffffff;
-}
-
-ion-card-header,
-ion-card-content,
-ion-card-title,
-ion-card-subtitle {
-  --color: #ffffff;
-  color: #ffffff;
-}
-
 /* Estilos para botones - asegurar contraste adecuado */
 ion-button {
   --color: var(--ion-color-primary-contrast);
@@ -142,6 +126,17 @@ ion-item {
 /* Sobrescribir el color de borde en focus para inputs con fill='outline' */
 ion-input[fill='outline'] {
   --highlight-color: var(--ion-color-primary-contrast) !important;
+}
+
+/* Sobrescribir el color de borde en focus para textarea con fill='outline' */
+ion-textarea[fill='outline'] {
+  --highlight-color: var(--ion-color-primary-contrast) !important;
+}
+
+ion-textarea {
+  --highlight-color-focused: var(--ion-color-primary-contrast);
+  --highlight-color-valid: var(--ion-color-success);
+  --highlight-color-invalid: var(--ion-color-danger);
 }
 
 /* Estilos para IonSelect - hacer que el popover/alert tenga el color de las cards */
@@ -208,6 +203,30 @@ ion-action-sheet.select-action-sheet .action-sheet-button {
 }
 
 ion-action-sheet.select-action-sheet .action-sheet-selected {
+  background: var(--ion-color-primary-shade);
+}
+
+/* Estilos para el popover del datetime (calendario) */
+ion-popover.date-modal {
+  --background: var(--ion-color-primary);
+}
+
+ion-popover.date-modal ion-datetime {
+  --background: var(--ion-color-primary);
+  --background-rgb: var(--ion-color-primary-rgb);
+}
+
+/* Botones DONE y CANCEL del datetime */
+ion-popover.date-modal ion-datetime::part(buttons) {
+  border-top: 1px solid var(--ion-color-medium);
+}
+
+ion-popover.date-modal ion-datetime::part(button) {
+  color: var(--ion-color-tertiary);
+  font-weight: 600;
+}
+
+ion-popover.date-modal ion-datetime::part(button):hover {
   background: var(--ion-color-primary-shade);
 }
 

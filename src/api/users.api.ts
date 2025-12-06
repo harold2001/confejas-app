@@ -44,3 +44,23 @@ export const markAsArrived = async (id: string, body: MarkAsArrivedDto): Promise
   const res = await axiosApi.put(`${route}/arrived/${id}`, body);
   return res.data;
 };
+
+export const permutaUser = async (body: CreateUserDto & { originalUserId: string }): Promise<IUser> => {
+  const res = await axiosApi.post(`${route}/permuta`, body);
+  return res.data;
+};
+
+export const getStatistics = async () => {
+  const res = await axiosApi.get(`${route}/statistics`);
+  return res.data;
+};
+
+export const verifyAttendance = async (token: string) => {
+  const res = await axiosApi.post(`${route}/verify-attendance`, { token });
+  return res.data;
+};
+
+export const sendQrToUsers = async () => {
+  const res = await axiosApi.post(`${route}/send-qr`);
+  return res.data;
+};

@@ -1,14 +1,130 @@
-.headerCol {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-}
+.detailsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
 
-.loadingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  padding: 2rem;
+  .backButton {
+    margin-bottom: 1rem;
+  }
+
+  .userName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+
+    @media (max-width: 767px) {
+      font-size: 1.25rem;
+    }
+  }
+
+  .rolesContainer {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  .actionItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    flex-wrap: wrap;
+
+    @media (max-width: 767px) {
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    ion-label {
+      flex-shrink: 0;
+    }
+  }
+
+  .infoRow {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .infoLabel {
+      color: var(--ion-color-medium);
+      padding-bottom: 0.25rem;
+
+      @media (min-width: 768px) {
+        padding-bottom: 0;
+      }
+
+      strong {
+        font-weight: 600;
+      }
+    }
+
+    .infoValue {
+      word-break: break-word;
+      padding-top: 0.25rem;
+
+      @media (min-width: 768px) {
+        padding-top: 0;
+      }
+
+      ion-badge {
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .roomSection {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    h4 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-secondary);
+    }
+  }
+
+  .notesContent {
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.6;
+  }
+
+  .loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-height: 50vh;
+  }
+
+  ion-card {
+    margin-bottom: 1rem;
+  }
+
+  ion-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+
+    @media (max-width: 767px) {
+      font-size: 1.1rem;
+    }
+  }
+
+  ion-button {
+    @media (max-width: 767px) {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+  }
 }

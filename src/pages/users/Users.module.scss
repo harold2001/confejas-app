@@ -84,3 +84,27 @@
   padding-top: 1rem;
   border-top: 1px solid var(--ion-color-light);
 }
+
+// Filters Section Styles
+.filterContent {
+  border-top: 1px solid var(--ion-color-step-200);
+}
+
+.filterLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin-top: 15px;
+}
+
+.filterInput {
+  width: 100%;
+  font-size: 16px;
+}
+
+@media screen and (min-width: 768px) {
+  .filterLabel {
+    margin-top: 0;
+  }
+}

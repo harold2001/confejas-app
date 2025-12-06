@@ -26,14 +26,16 @@ import usePlatform from '../../hooks/usePlatform';
 import Header from '../../components/Header/Header';
 import { fullNameBodyTemplate } from '../users/table.helper';
 import MobileView from './MobileView';
-import { ROUTES } from '../../constants/routes';
 import { eyeOutline } from 'ionicons/icons';
+import AttendanceDetailsModal from '../../components/AttendanceDetailsModal/AttendanceDetailsModal';
 
 const Attendance = () => {
   const [inputValue, setInputValue] = useState('');
   const [searchName, setSearchName] = useState('');
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | undefined>(undefined);
   const { markAsArrived } = useUser();
   const { isMobile } = usePlatform();
   const isMobileView = isMobile();
@@ -58,15 +60,20 @@ const Attendance = () => {
     setRows(event.rows);
   };
 
+  const handleViewDetails = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedUserId(undefined);
+  };
+
   const actionBodyTemplate = (rowData: IUser) => {
     return (
       <div style={{ display: 'flex', gap: '0.5rem' }} onClick={(e) => e.stopPropagation()}>
-        <IonButton
-          size='small'
-          fill='clear'
-          title='View Details'
-          routerLink={ROUTES.ATTENDANCE_DETAILS.replace(':id', rowData.id)}
-        >
+        <IonButton size='small' fill='clear' title='View Details' onClick={() => handleViewDetails(rowData.id)}>
           <IonIcon slot='icon-only' icon={eyeOutline} />
         </IonButton>
       </div>
@@ -142,7 +149,12 @@ const Attendance = () => {
       {isMobileView && <Header title='Asistencia' />}
       <IonContent className='ion-padding'>
         {isMobileView ? (
-          <MobileView users={data?.data} refetch={refetch} handleSearchByName={handleSearchByName} />
+          <MobileView
+            users={data?.data}
+            refetch={refetch}
+            handleSearchByName={handleSearchByName}
+            onViewDetails={handleViewDetails}
+          />
         ) : (
           <IonRow>
             <IonCol>
@@ -177,8 +189,8 @@ const Attendance = () => {
                     <Column field='firstName' header='Nombre Completo' body={fullNameBodyTemplate} sortable />
                     <Column field='stake.name' header='Estaca' sortable />
                     <Column field='ward' header='Barrio' sortable />
-                    <Column field='keyCode' header='Código de Llave' sortable />
-                    <Column field='age' header='Edad' sortable />
+                    <Column field='company.name' header='Compañía' sortable />
+                    <Column field='userRooms.0.room.roomNumber' header='Habitación' sortable />
                     <Column
                       field='isMemberOfTheChurch'
                       header='Miembro de la Iglesia'
@@ -192,6 +204,8 @@ const Attendance = () => {
             </IonCol>
           </IonRow>
         )}
+
+        <AttendanceDetailsModal isOpen={isModalOpen} onClose={handleCloseModal} userId={selectedUserId} />
       </IonContent>
     </IonPage>
   );

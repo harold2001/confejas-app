@@ -1,164 +1,74 @@
 import {
-  IonButton,
+  IonPage,
+  IonContent,
   IonCard,
-  IonCardContent,
   IonCardHeader,
   IonCardTitle,
-  IonCol,
-  IonContent,
+  IonCardContent,
   IonLabel,
-  IonPage,
-  IonRow,
   IonSpinner,
-  IonToggle,
-  IonDatetime,
+  IonButton,
   IonIcon,
+  IonRow,
+  IonCol,
+  IonBadge,
+  IonToggle,
 } from '@ionic/react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router';
-import { useIonRouter } from '@ionic/react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+import { arrowBackOutline, swapHorizontalOutline } from 'ionicons/icons';
 import { getUserById } from '../../../api/users.api';
 import QUERY_KEYS from '../../../constants/query-keys';
-import {
-  createUserSchema,
-  updateUserSchema,
-  CreateUserFormData,
-  UpdateUserFormData,
-} from '../../../schemas/userSchema';
-import { ROUTES } from '../../../constants/routes';
-import { getStakes } from '../../../api/stakes.api';
-import { getRoles } from '../../../api/roles.api';
-import { ROLES } from '../../../constants/roles';
-import { arrowBackOutline } from 'ionicons/icons';
-import { useUser } from '../../../hooks/useUser';
+import Header from '../../../components/Header/Header';
 import usePlatform from '../../../hooks/usePlatform';
-import InputValidated from '../../../components/Input/InputValidated';
-import PhoneInputValidated from '../../../components/Input/PhoneInputValidated';
-import TextareaValidated from '../../../components/Input/TextareaValidated';
-import SelectValidated from '../../../components/Input/SelectValidated';
+import { ROUTES } from '../../../constants/routes';
+import { useUser } from '../../../hooks/useUser';
 import styles from './UserDetails.module.scss';
-import { CreateUserDto } from '../../../interfaces/dto/create-user.dto';
 
 const UserDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const router = useIonRouter();
-  const isEditMode = !!id;
-  const { saveUser } = useUser();
-  const { isDesktop } = usePlatform();
-
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: [QUERY_KEYS.GET_USER_BY_ID, id],
-    queryFn: () => getUserById(id!),
-    enabled: isEditMode,
-  });
-
-  const { data: stakes, isLoading: stakesLoading } = useQuery({
-    queryKey: [QUERY_KEYS.GET_STAKES],
-    queryFn: getStakes,
-  });
-
-  const { data: roles } = useQuery({
-    queryKey: [QUERY_KEYS.GET_ROLES],
-    queryFn: getRoles,
-  });
-
-  const methods = useForm<CreateUserFormData | UpdateUserFormData>({
-    resolver: zodResolver(isEditMode ? updateUserSchema : createUserSchema),
-    defaultValues: {
-      firstName: '',
-      middleName: '',
-      paternalLastName: '',
-      maternalLastName: '',
-      dni: '',
-      gender: undefined,
-      phone: '',
-      email: '',
-      address: '',
-      region: '',
-      department: '',
-      medicalCondition: '',
-      keyCode: '',
-      ward: '',
-      stakeId: '',
-      age: '',
-      isMemberOfTheChurch: true,
-      notes: '',
-    },
-  });
+  const history = useHistory();
+  const { isMobile } = usePlatform();
+  const isMobileView = isMobile();
+  const { markAsArrived } = useUser();
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = methods;
+    data: user,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_BY_ID, id],
+    queryFn: () => getUserById(id),
+    enabled: !!id,
+  });
 
-  // Populate form with user data when loaded (edit mode)
-  useEffect(() => {
-    if (data && isEditMode) {
-      reset({
-        id: data.id,
-        firstName: data.firstName || '',
-        middleName: data.middleName || '',
-        paternalLastName: data.paternalLastName || '',
-        maternalLastName: data.maternalLastName || '',
-        dni: data.dni || '',
-        birthDate: data.birthDate ? new Date(data.birthDate).toISOString() : undefined,
-        gender: data.gender === 'Varón' || data.gender === 'Mujer' ? data.gender : undefined,
-        phone: data.phone || '',
-        email: data.email || '',
-        address: data.address || '',
-        region: data.region || '',
-        department: data.department || '',
-        medicalCondition: data.medicalCondition || '',
-        keyCode: data.keyCode || '',
-        ward: data.ward || '',
-        stakeId: data.stake?.id || '',
-        age: data.age || '',
-        isMemberOfTheChurch: data.isMemberOfTheChurch ?? true,
-        notes: data.notes || '',
-      });
-    }
-  }, [data, reset, isEditMode]);
+  const InfoRow = ({ label, value }: { label: string; value: string | number | undefined | null }) => (
+    <IonRow className={styles.infoRow}>
+      <IonCol size='12' sizeMd='5' className={styles.infoLabel}>
+        <strong>{label}</strong>
+      </IonCol>
+      <IonCol size='12' sizeMd='7' className={styles.infoValue}>
+        {value || 'N/A'}
+      </IonCol>
+    </IonRow>
+  );
 
-  const onSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
-    try {
-      if (isEditMode) {
-        // Update existing user
-        const updateData = {
-          ...(formData as UpdateUserFormData),
-          birthDate: formData.birthDate ? new Date(formData.birthDate) : undefined,
-        };
-        await saveUser(updateData);
-        await refetch();
-      } else {
-        // Create new user - find Participant role ID
-        const participantRole = roles?.find((role) => role.name === ROLES.PARTICIPANT);
-        if (!participantRole) {
-          return;
-        }
-
-        const createData = {
-          ...(formData as CreateUserFormData),
-          birthDate: formData.birthDate ? new Date(formData.birthDate) : undefined,
-          password: 'password', // Default password
-          roleIds: [participantRole.id], // Use Participant role ID
-        };
-
-        await saveUser(createData as CreateUserDto);
-        router.push(ROUTES.USERS, 'back', 'replace');
-      }
-    } catch {
-      // Error handling is done by useUser hook
-    }
-  };
+  const BooleanRow = ({ label, value }: { label: string; value: boolean | undefined }) => (
+    <IonRow className={styles.infoRow}>
+      <IonCol size='12' sizeMd='5' className={styles.infoLabel}>
+        <strong>{label}</strong>
+      </IonCol>
+      <IonCol size='12' sizeMd='7' className={styles.infoValue}>
+        <IonBadge color={value ? 'success' : 'danger'}>{value ? 'Sí' : 'No'}</IonBadge>
+      </IonCol>
+    </IonRow>
+  );
 
   if (isLoading) {
     return (
       <IonPage>
+        {isMobileView && <Header title='Detalles del Participante' />}
         <IonContent className='ion-padding'>
           <div className={styles.loadingContainer}>
             <IonSpinner name='crescent' />
@@ -168,256 +78,201 @@ const UserDetails = () => {
     );
   }
 
+  if (error || !user) {
+    return (
+      <IonPage>
+        {isMobileView && <Header title='Detalles del Participante' />}
+        <IonContent className='ion-padding'>
+          <IonCard color='danger'>
+            <IonCardContent>Error al cargar la información del usuario. Por favor, intente nuevamente.</IonCardContent>
+          </IonCard>
+          <IonButton expand='block' onClick={() => history.push(ROUTES.ATTENDANCE)}>
+            Volver a Asistencia
+          </IonButton>
+        </IonContent>
+      </IonPage>
+    );
+  }
+
+  const fullName = [user.firstName, user.middleName, user.paternalLastName, user.maternalLastName]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <IonPage>
+      {isMobileView && <Header title='Detalles del Participante' />}
       <IonContent className='ion-padding'>
-        <IonRow>
-          <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2' className={styles.headerCol}>
-            <IonButton routerLink={ROUTES.USERS} fill='clear' type='button' className={styles.backButton}>
-              <IonIcon icon={arrowBackOutline} slot='start' />
-              Volver
-            </IonButton>
-            <h1 className='ion-no-margin'>{isEditMode ? 'Editar Usuario' : 'Crear Usuario'}</h1>
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2'>
-            <FormProvider {...methods}>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Personal Information Section */}
-                <IonCard>
-                  <IonCardHeader>
-                    <IonCardTitle>Información Personal</IonCardTitle>
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <IonRow>
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated name='firstName' label='Nombre' placeholder='Ingrese el nombre' required />
-                      </IonCol>
+        <div className={styles.detailsContainer}>
+          <IonButton fill='clear' onClick={() => history.push(ROUTES.USERS)} className={styles.backButton}>
+            <IonIcon slot='start' icon={arrowBackOutline} />
+            Volver
+          </IonButton>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='middleName'
-                          label='Segundo Nombre'
-                          placeholder='Ingrese el segundo nombre'
-                          required={false}
-                        />
-                      </IonCol>
+          {/* Header Card with Actions */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle className={styles.userName}>{fullName}</IonCardTitle>
+              <div className={styles.rolesContainer}>
+                {user.roles?.map((role) => (
+                  <IonBadge key={role.id} color='secondary'>
+                    {role?.name}
+                  </IonBadge>
+                ))}
+              </div>
+            </IonCardHeader>
+            <IonCardContent>
+              <IonRow className='ion-align-items-center ion-justify-content-between'>
+                <IonCol size='12' sizeMd='6'>
+                  <div className={styles.actionItem}>
+                    <IonLabel>
+                      <strong>Marcar Asistencia:</strong>
+                    </IonLabel>
+                    <IonToggle
+                      checked={user.hasArrived}
+                      color='success'
+                      onIonChange={async (e) => {
+                        await markAsArrived({ id: user.id, body: { hasArrived: e.detail.checked } });
+                        await refetch();
+                      }}
+                    />
+                    <IonBadge color={user.hasArrived ? 'success' : 'medium'}>
+                      {user.hasArrived ? 'Presente' : 'Ausente'}
+                    </IonBadge>
+                  </div>
+                </IonCol>
+                <IonCol size='12' sizeMd='6' className='ion-text-end'>
+                  <IonButton color='warning'>
+                    <IonIcon slot='start' icon={swapHorizontalOutline} />
+                    Realizar Permuta
+                  </IonButton>
+                </IonCol>
+              </IonRow>
+            </IonCardContent>
+          </IonCard>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='paternalLastName'
-                          label='Apellido Paterno'
-                          placeholder='Ingrese el apellido paterno'
-                          required
-                        />
-                      </IonCol>
+          {/* Información Personal */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Información Personal</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <InfoRow label='ID' value={user?.id} />
+              <InfoRow label='Nombre' value={user?.firstName} />
+              <InfoRow label='Segundo Nombre' value={user?.middleName} />
+              <InfoRow label='Apellido Paterno' value={user?.paternalLastName} />
+              <InfoRow label='Apellido Materno' value={user?.maternalLastName} />
+              <InfoRow label='DNI' value={user?.dni} />
+              <InfoRow
+                label='Fecha de Nacimiento'
+                value={user?.birthDate ? new Date(user?.birthDate).toLocaleDateString() : 'N/A'}
+              />
+              <InfoRow label='Edad' value={user?.age} />
+              <InfoRow label='Género' value={user?.gender} />
+            </IonCardContent>
+          </IonCard>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='maternalLastName'
-                          label='Apellido Materno'
-                          placeholder='Ingrese el apellido materno'
-                          required={false}
-                        />
-                      </IonCol>
+          {/* Información de Contacto */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Información de Contacto</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <InfoRow label='Teléfono' value={user?.phone} />
+              <InfoRow label='Email' value={user?.email} />
+              <InfoRow label='Dirección' value={user?.address} />
+              <InfoRow label='Región' value={user?.region} />
+              <InfoRow label='Departamento' value={user?.department} />
+            </IonCardContent>
+          </IonCard>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated name='dni' label='DNI' placeholder='Ingrese el DNI' required={false} />
-                      </IonCol>
+          {/* Información Eclesiástica */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Información Eclesiástica</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <BooleanRow label='Miembro de la Iglesia' value={user?.isMemberOfTheChurch} />
+              <InfoRow label='Estaca' value={user?.stake?.name} />
+              <InfoRow label='Barrio' value={user?.ward} />
+            </IonCardContent>
+          </IonCard>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <SelectValidated
-                          name='gender'
-                          label='Género'
-                          placeholder='Seleccione el género'
-                          options={[
-                            { label: 'Varón', value: 'Varón' },
-                            { label: 'Mujer', value: 'Mujer' },
-                          ]}
-                          isDesktopBoolean={isDesktop()}
-                          interface='action-sheet'
-                          required={false}
-                        />
-                      </IonCol>
+          {/* Información Médica y de Salud */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Información Médica y de Salud</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <InfoRow label='Condición Médica' value={user?.medicalCondition} />
+              <InfoRow label='Tratamiento Médico' value={user?.medicalTreatment} />
+              <InfoRow label='Restricción Dietética' value={user?.dietaryRestriction} />
+              <InfoRow label='Tipo de Sangre' value={user?.bloodType} />
+              <InfoRow label='Seguro de Salud' value={user?.healthInsurance} />
+            </IonCardContent>
+          </IonCard>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <IonLabel position='stacked'>Fecha de Nacimiento</IonLabel>
-                        <Controller
-                          name='birthDate'
-                          control={control}
-                          render={({ field }) => <IonDatetime {...field} presentation='date' />}
-                        />
-                      </IonCol>
+          {/* Contacto de Emergencia */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Contacto de Emergencia</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <InfoRow label='Nombre del Contacto' value={user?.emergencyContactName} />
+              <InfoRow label='Teléfono del Contacto' value={user?.emergencyContactPhone} />
+            </IonCardContent>
+          </IonCard>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='age'
-                          label='Edad'
-                          type='number'
-                          placeholder='Ingrese la edad'
-                          required={false}
-                        />
-                      </IonCol>
-                    </IonRow>
-                  </IonCardContent>
-                </IonCard>
+          {/* Información de Alojamiento */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Información de Alojamiento</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <InfoRow label='Compañía' value={user?.company?.name} />
+              <InfoRow label='Código de Llave' value={user?.keyCode} />
+              <BooleanRow label='Ha Llegado' value={user?.hasArrived} />
+              {user?.userRooms && user?.userRooms.length > 0 ? (
+                user?.userRooms.map((userRoom, index) => (
+                  <div key={userRoom.id} className={styles.roomSection}>
+                    <h4>Habitación {index + 1}</h4>
+                    <InfoRow label='Número de Habitación' value={userRoom.room?.roomNumber} />
+                    <InfoRow label='Edificio' value={userRoom.room?.floor?.building?.name} />
+                    <InfoRow label='Piso' value={userRoom.room?.floor?.number} />
+                    <InfoRow label='Tipo de Habitación' value={userRoom.room?.roomType?.name} />
+                  </div>
+                ))
+              ) : (
+                <InfoRow label='Habitación' value='No asignada' />
+              )}
+            </IonCardContent>
+          </IonCard>
 
-                {/* Contact Information Section */}
-                <IonCard>
-                  <IonCardHeader>
-                    <IonCardTitle>Información de Contacto</IonCardTitle>
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <IonRow>
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='email'
-                          label='Email'
-                          type='email'
-                          placeholder='ejemplo@correo.com'
-                          required={false}
-                        />
-                      </IonCol>
+          {/* Información Adicional */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Información Adicional</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <InfoRow label='Talla de Polo' value={user?.shirtSize} />
+              <InfoRow label='Estado' value={user?.status} />
+              <InfoRow label='Creado' value={user?.createdAt ? new Date(user?.createdAt).toLocaleString() : 'N/A'} />
+              <InfoRow
+                label='Actualizado'
+                value={user?.updatedAt ? new Date(user?.updatedAt).toLocaleString() : 'N/A'}
+              />
+            </IonCardContent>
+          </IonCard>
 
-                      <IonCol size='12' sizeMd='6'>
-                        <PhoneInputValidated name='phone' label='Teléfono' required={false} />
-                      </IonCol>
-
-                      <IonCol size='12'>
-                        <TextareaValidated
-                          name='address'
-                          label='Dirección'
-                          placeholder='Ingrese la dirección'
-                          rows={2}
-                          required={false}
-                        />
-                      </IonCol>
-
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated name='region' label='Región' placeholder='Ingrese la región' required={false} />
-                      </IonCol>
-
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='department'
-                          label='Departamento'
-                          placeholder='Ingrese el departamento'
-                          required={false}
-                        />
-                      </IonCol>
-                    </IonRow>
-                  </IonCardContent>
-                </IonCard>
-
-                {/* Church Information Section */}
-                <IonCard>
-                  <IonCardHeader>
-                    <IonCardTitle>Información Eclesiástica</IonCardTitle>
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <IonRow>
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated name='ward' label='Barrio' placeholder='Ingrese el barrio' required={false} />
-                      </IonCol>
-
-                      <IonCol size='12' sizeMd='6'>
-                        <SelectValidated
-                          name='stakeId'
-                          label='Estaca'
-                          placeholder='Seleccione una estaca'
-                          options={
-                            stakesLoading
-                              ? [{ label: 'Cargando...', value: '' }]
-                              : stakes?.map((stake) => ({ label: stake.name, value: stake.id })) || []
-                          }
-                          isDesktopBoolean={isDesktop()}
-                          interface='action-sheet'
-                          required={false}
-                        />
-                      </IonCol>
-
-                      <IonCol size='12'>
-                        <IonLabel>¿Es miembro de la iglesia?</IonLabel>
-                        <Controller
-                          name='isMemberOfTheChurch'
-                          control={control}
-                          render={({ field }) => (
-                            <IonToggle checked={field.value} onIonChange={(e) => field.onChange(e.detail.checked)} />
-                          )}
-                        />
-                      </IonCol>
-                    </IonRow>
-                  </IonCardContent>
-                </IonCard>
-
-                {/* Additional Information Section */}
-                <IonCard>
-                  <IonCardHeader>
-                    <IonCardTitle>Información Adicional</IonCardTitle>
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <IonRow>
-                      <IonCol size='12'>
-                        <TextareaValidated
-                          name='medicalCondition'
-                          label='Condición Médica'
-                          placeholder='Ingrese alguna condición médica importante'
-                          rows={3}
-                          required={false}
-                        />
-                      </IonCol>
-
-                      <IonCol size='12'>
-                        <TextareaValidated
-                          name='notes'
-                          label='Notas / Taller Propuesto'
-                          placeholder='Ingrese notas adicionales o taller que le gustaría aprender'
-                          rows={3}
-                          required={false}
-                        />
-                      </IonCol>
-
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='keyCode'
-                          label='Código de Llave'
-                          placeholder='Ingrese el código de llave'
-                          required={false}
-                        />
-                      </IonCol>
-                    </IonRow>
-                  </IonCardContent>
-                </IonCard>
-
-                {/* Action Buttons */}
-                <IonRow className='ion-margin-top'>
-                  <IonCol size='12' sizeMd='6'>
-                    <IonButton
-                      expand='block'
-                      color='medium'
-                      onClick={() => router.push(ROUTES.USERS, 'back')}
-                      disabled={isSubmitting}
-                    >
-                      Cancelar
-                    </IonButton>
-                  </IonCol>
-                  <IonCol size='12' sizeMd='6'>
-                    <IonButton expand='block' type='submit' color='success' disabled={isSubmitting}>
-                      {isSubmitting ? (
-                        <IonSpinner name='crescent' />
-                      ) : isEditMode ? (
-                        'Actualizar Usuario'
-                      ) : (
-                        'Crear Usuario'
-                      )}
-                    </IonButton>
-                  </IonCol>
-                </IonRow>
-              </form>
-            </FormProvider>
-          </IonCol>
-        </IonRow>
+          {/* Notas */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Notas</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <p className={styles.notesContent}>{user?.notes || 'Sin notas'}</p>
+            </IonCardContent>
+          </IonCard>
+        </div>
       </IonContent>
     </IonPage>
   );

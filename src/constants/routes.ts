@@ -6,7 +6,7 @@ export const ROUTES = {
   CREATE_USER: '/users/create',
   USERS: '/users',
   SCAN_USER: '/users/scan',
-  DETALS_USER: '/users/:id',
+  DETAILS_USER: '/users/details/:id',
   EDIT_USER: '/users/edit/:id',
   ATTENDANCE: '/attendance',
   ATTENDANCE_DETAILS: '/attendance/:id',

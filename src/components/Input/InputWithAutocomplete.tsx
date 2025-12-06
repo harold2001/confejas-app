@@ -1,5 +1,5 @@
 import { IonInput, IonList, IonItem, IonLabel, InputCustomEvent } from '@ionic/react';
-import React, { useState, useEffect, useId, useRef } from 'react';
+import React, { useState, useEffect, useId, useRef, JSX } from 'react';
 import {
   AutocompleteTypes,
   InputChangeEventDetail,
@@ -54,7 +54,7 @@ const InputWithAutocompleteComponent = <T extends FieldValues>(
     required = true,
     maxLength,
     minLength,
-    isManualError = null,
+    isManualError,
     suggestions = [],
     minCharsToSearch = 1,
     onSuggestionSelect,
@@ -71,7 +71,7 @@ const InputWithAutocompleteComponent = <T extends FieldValues>(
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const reactId = useId();
-  const memoId = useRef<string>();
+  const memoId = useRef<string>('');
 
   if (!memoId.current) {
     memoId.current = id || reactId;

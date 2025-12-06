@@ -10,7 +10,7 @@ export interface IUser extends BaseInterface {
   paternalLastName: string;
   maternalLastName?: string;
   dni?: string;
-  birthDate?: Date;
+  birthDate?: string;
   gender?: string;
   phone?: string;
   email?: string;
@@ -20,6 +20,7 @@ export interface IUser extends BaseInterface {
   department?: string;
   hasArrived: boolean;
   medicalCondition?: string;
+  medicalTreatment?: string;
   dietaryRestriction?: string;
   keyCode?: string;
   ward?: string;
@@ -28,6 +29,12 @@ export interface IUser extends BaseInterface {
   age?: string;
   isMemberOfTheChurch?: boolean;
   notes?: string;
+  status?: string;
+  shirtSize?: string;
+  bloodType?: string;
+  healthInsurance?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
   roles: IRole[];
   userRooms: IUserRoom[];
 }

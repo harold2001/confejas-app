@@ -146,13 +146,13 @@ const AttendanceDetails = () => {
           </IonButton>
 
           {/* Header Card */}
-          <IonCard className={styles['header-card']}>
+          <IonCard className={styles['header-card']} color='primary'>
             <IonCardHeader>
               <IonCardTitle>{fullName}</IonCardTitle>
               <div className={styles['roles-container']}>
                 {user.roles?.map((role) => (
                   <IonBadge key={role.id} color='primary'>
-                    {role.name}
+                    {role?.name}
                   </IonBadge>
                 ))}
               </div>
@@ -178,7 +178,7 @@ const AttendanceDetails = () => {
           </IonCard>
 
           {/* Información Principal - Lectura Rápida */}
-          <IonCard>
+          <IonCard color='primary'>
             <IonCardHeader>
               <IonCardTitle>Información Principal</IonCardTitle>
             </IonCardHeader>
@@ -190,15 +190,11 @@ const AttendanceDetails = () => {
               <InfoRow label='Compañía' value={user.company?.name} highlight />
               <InfoRow
                 label='Habitación'
-                value={
-                  user.userRooms?.[0]?.room
-                    ? `Cuarto ${user.userRooms[0].room.roomNumber} - ${user.userRooms[0].room.roomType.name}`
-                    : 'No asignado'
-                }
+                value={user.userRooms?.[0]?.room ? user.userRooms[0].room.roomNumber : 'No asignado'}
                 highlight
               />
               <InfoRow label='Condición Médica' value={user.medicalCondition || 'Ninguna'} highlight />
-              <InfoRow label='Condición Alimenticia' value={user.dietaryRestriction || 'Ninguna'} highlight />
+              <InfoRow label='Tratamiento Médico' value={user.medicalTreatment || 'Ninguno'} highlight />
               <BooleanRow label='Es Miembro de la Iglesia' value={user.isMemberOfTheChurch} highlight />
               <InfoRow label='Barrio' value={user.ward} highlight />
               <InfoRow label='Estaca' value={user.stake?.name} highlight />
@@ -206,55 +202,33 @@ const AttendanceDetails = () => {
           </IonCard>
 
           {/* Información Personal Adicional */}
-          <IonCard>
+          <IonCard color='primary'>
             <IonCardHeader>
               <IonCardTitle>Información Adicional</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
-              <InfoRow label='DNI' value={user.dni} />
-              <InfoRow label='Edad' value={user.age} />
-              <InfoRow label='Género' value={user.gender} />
-              <InfoRow label='Teléfono' value={user.phone} />
-              <InfoRow label='Email' value={user.email} />
-              <InfoRow label='Departamento' value={user.department} />
+              <InfoRow label='DNI' value={user.dni} highlight />
+              <InfoRow label='Edad' value={user.age} highlight />
+              <InfoRow label='Género' value={user.gender} highlight />
+              <InfoRow label='Teléfono' value={user.phone} highlight />
+              <InfoRow label='Email' value={user.email} highlight />
             </IonCardContent>
           </IonCard>
 
           {/* Estado de Asistencia */}
-          <IonCard>
+          <IonCard color='primary'>
             <IonCardHeader>
               <IonCardTitle>Estado de Asistencia</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
               <BooleanRow label='Ha Llegado (Check-in)' value={user.hasArrived} />
-              <InfoRow label='Código de Llave' value={user.keyCode} />
+              <InfoRow label='Código de Llave' value={user.keyCode} highlight />
             </IonCardContent>
           </IonCard>
 
-          {/* Información Completa de Habitación */}
-          {user.userRooms && user.userRooms.length > 0 && (
-            <IonCard>
-              <IonCardHeader>
-                <IonCardTitle>Detalles de Habitación</IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
-                {user.userRooms.map((userRoom, index) => (
-                  <div key={userRoom.id} className={styles['room-item']}>
-                    <InfoRow label='Edificio' value={userRoom.room?.floor?.building?.name} />
-                    <InfoRow label='Piso' value={userRoom.room?.floor?.number?.toString()} />
-                    <InfoRow label='Número de Habitación' value={userRoom.room?.roomNumber} />
-                    <InfoRow label='Tipo de Habitación' value={userRoom.room?.roomType?.name} />
-                    <InfoRow label='Capacidad' value={`${userRoom.room?.totalBeds} camas`} />
-                    {index < user.userRooms.length - 1 && <hr className={styles['room-details-separator']} />}
-                  </div>
-                ))}
-              </IonCardContent>
-            </IonCard>
-          )}
-
           {/* Notas */}
           {user.notes && (
-            <IonCard>
+            <IonCard color='primary'>
               <IonCardHeader>
                 <IonCardTitle>Notas</IonCardTitle>
               </IonCardHeader>

@@ -1,4 +1,5 @@
 import { DatetimeCustomEvent, IonDatetime, IonDatetimeButton, IonIcon, IonPopover } from '@ionic/react';
+import { calendarOutline } from 'ionicons/icons';
 import { isAfter, parseISO } from 'date-fns';
 import { useFormContext } from 'react-hook-form';
 import { getFormattedDateToSave } from '../../utils/helpers';
@@ -50,7 +51,7 @@ const DatetimeButtonPopoverValidated = ({
   return (
     <>
       <IonDatetimeButton datetime={datetimeId} id={buttonId} disabled={disabled}>
-        <IonIcon icon='calendar' slot='date-target' />
+        <IonIcon icon={calendarOutline} slot='date-target' />
       </IonDatetimeButton>
       <IonPopover
         keepContentsMounted
@@ -66,6 +67,7 @@ const DatetimeButtonPopoverValidated = ({
           presentation='date'
           preferWheel={preferWheel}
           showDefaultButtons
+          color='tertiary'
           {...(maxToday ? { max: getTodayMax() } : {})}
           {...(maxValue ? { max: new Date(maxValue).toISOString() } : {})}
           onIonChange={onIonChange ?? ((e) => onDateInputChange(e))}

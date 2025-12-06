@@ -4,26 +4,24 @@ import styles from './Attendance.module.scss';
 import { RefetchType } from '../../types';
 import { useUser } from '../../hooks/useUser';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
-import { ROUTES } from '../../constants/routes';
 
 interface Props {
   users: IUser[] | undefined;
   refetch: RefetchType;
   handleSearchByName: (name: string) => void;
+  onViewDetails: (userId: string) => void;
 }
 
-const MobileView = ({ users, refetch, handleSearchByName }: Props) => {
+const MobileView = ({ users, refetch, handleSearchByName, onViewDetails }: Props) => {
   const { markAsArrived } = useUser();
-  const history = useHistory();
   const [name, setName] = useState<string>('');
 
   return (
     <>
-      <IonCard>
+      <IonCard color='primary'>
         <IonCardContent>
-          <IonRow className='ion-align-items-center'>
-            <IonCol size='9'>
+          <IonRow className='ion-align-items-center ion-justify-content-center'>
+            <IonCol size='12'>
               <IonInput
                 id='mobile-search-input'
                 placeholder='Buscar por nombre o apellidos'
@@ -36,7 +34,7 @@ const MobileView = ({ users, refetch, handleSearchByName }: Props) => {
                 }}
               />
             </IonCol>
-            <IonCol size='3'>
+            <IonCol size='12'>
               <IonButton type='button' color='light' expand='block' onClick={() => handleSearchByName(name)}>
                 Buscar
               </IonButton>
@@ -45,11 +43,7 @@ const MobileView = ({ users, refetch, handleSearchByName }: Props) => {
         </IonCardContent>
       </IonCard>
       {users?.map((user) => (
-        <IonCard
-          key={user.id}
-          onClick={() => history.push(ROUTES.ATTENDANCE_DETAILS.replace(':id', user.id))}
-          className={styles.userCard}
-        >
+        <IonCard color='primary' key={user.id} onClick={() => onViewDetails(user.id)} className={styles.userCard}>
           <IonCardContent>
             <IonRow>
               <IonCol size='9'>

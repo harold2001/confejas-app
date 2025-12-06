@@ -5,6 +5,7 @@ const QUERY_KEYS = {
   GET_USER_BY_ID: 'getUserById',
   GET_STAKES: 'getStakes',
   GET_ROLES: 'getRoles',
+  GET_STATISTICS: 'getStatistics',
 };
 
 export default QUERY_KEYS;

@@ -44,7 +44,7 @@ const DateInputValidated = <T extends FieldValues>({
   }
 
   const optionsMask = maskitoDateOptionsGenerator({
-    mode: 'mm/dd/yyyy',
+    mode: 'dd/mm/yyyy',
     separator: '-',
   });
 
@@ -61,8 +61,8 @@ const DateInputValidated = <T extends FieldValues>({
     const rawValue = e.detail.value;
     if (disabled || !rawValue || rawValue.length < 10) return;
 
-    // Parse MM-DD-YYYY format to a valid Date object
-    const [month, day, year] = rawValue.split('-').map(Number);
+    // Parse DD-MM-YYYY format to a valid Date object
+    const [day, month, year] = rawValue.split('-').map(Number);
     const selectedDate = new Date(year, month - 1, day); // month is 0-indexed
 
     if (!isValid(selectedDate)) {
@@ -83,7 +83,7 @@ const DateInputValidated = <T extends FieldValues>({
 
     try {
       const date = parseISO(value);
-      const result = format(date, 'MM-dd-yyyy');
+      const result = format(date, 'dd-MM-yyyy');
       return result;
     } catch {
       return value;
@@ -101,7 +101,7 @@ const DateInputValidated = <T extends FieldValues>({
       disabled={disabled}
       helperText={helperText}
       required={required}
-      placeholder='MM-DD-YYYY'
+      placeholder='DD-MM-YYYY'
       fill={fill}
       ref={(dateInput) => {
         if (dateInput) {

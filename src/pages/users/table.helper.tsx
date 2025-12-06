@@ -9,10 +9,10 @@ export const dateBodyTemplate = (rowData: IUser) => {
 // Full name body template
 export const fullNameBodyTemplate = (rowData: IUser) => {
   const parts = [
-    rowData.firstName,
-    rowData.middleName,
-    rowData.paternalLastName,
-    rowData.maternalLastName,
+    rowData.firstName || '',
+    rowData.middleName || '',
+    rowData.paternalLastName || '',
+    rowData.maternalLastName || '',
   ].filter(Boolean);
   return parts.join(' ');
 };

@@ -30,7 +30,7 @@ interface Props<T extends FieldValues> {
   inputChange?: (e: IonTextareaCustomEvent<TextareaInputEventDetail>) => void;
   inputInput?: (e: IonTextareaCustomEvent<TextareaChangeEventDetail>) => void;
   value?: string | number;
-  name?: FieldPath<T>;
+  name: FieldPath<T>;
   required?: boolean;
   rows?: number;
   className?: string;
@@ -57,7 +57,7 @@ const TextareaValidated = <T extends FieldValues>({
   const formState = formContext?.formState;
 
   const reactId = useId();
-  const memoId = useRef<string>();
+  const memoId = useRef<string>('');
 
   //  adding default id if not provided
   if (!memoId.current) {
