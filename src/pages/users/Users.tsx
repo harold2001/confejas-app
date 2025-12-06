@@ -625,6 +625,13 @@ const Users = () => {
                     headerStyle={{ textAlign: 'center' }}
                   />
                   <Column
+                    field='userRooms.0.room.roomNumber'
+                    header='Habitación'
+                    sortable
+                    bodyStyle={{ textAlign: 'center' }}
+                    headerStyle={{ textAlign: 'center' }}
+                  />
+                  <Column
                     field='isMemberOfTheChurch'
                     header='Miembro de la Iglesia'
                     body={(rowData: IUser) => (rowData.isMemberOfTheChurch ? 'Sí' : 'No')}

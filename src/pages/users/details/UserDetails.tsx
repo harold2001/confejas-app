@@ -161,11 +161,7 @@ const UserDetails = () => {
               <InfoRow label='Segundo Nombre' value={user?.middleName} />
               <InfoRow label='Apellido Paterno' value={user?.paternalLastName} />
               <InfoRow label='Apellido Materno' value={user?.maternalLastName} />
-              <InfoRow label='DNI' value={user?.dni} />
-              <InfoRow
-                label='Fecha de Nacimiento'
-                value={user?.birthDate ? new Date(user?.birthDate).toLocaleDateString() : 'N/A'}
-              />
+              <InfoRow label='Fecha de Nacimiento' value={user?.birthDate ? user?.birthDate : 'N/A'} />
               <InfoRow label='Edad' value={user?.age} />
               <InfoRow label='Género' value={user?.gender} />
             </IonCardContent>
