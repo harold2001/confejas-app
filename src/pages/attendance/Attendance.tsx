@@ -28,6 +28,7 @@ import { fullNameBodyTemplate } from '../users/table.helper';
 import MobileView from './MobileView';
 import { eyeOutline } from 'ionicons/icons';
 import AttendanceDetailsModal from '../../components/AttendanceDetailsModal/AttendanceDetailsModal';
+import { useSocket } from '../../hooks/useSocket';
 
 const Attendance = () => {
   const [inputValue, setInputValue] = useState('');
@@ -53,6 +54,11 @@ const Attendance = () => {
           ...(searchName && { searchName }),
         },
       }),
+  });
+
+  // Socket.IO connection for real-time updates
+  useSocket(() => {
+    refetch();
   });
 
   const onPage = (event: DataTablePageEvent) => {
@@ -134,6 +140,13 @@ const Attendance = () => {
     setFirst(0);
   };
 
+  const handleRefresh = async () => {
+    toast.loading('Cargando...');
+    await refetch();
+    toast.dismiss();
+    toast.success('Lista actualizada');
+  };
+
   useIonViewDidEnter(() => {
     refetch();
   });
@@ -154,6 +167,8 @@ const Attendance = () => {
             refetch={refetch}
             handleSearchByName={handleSearchByName}
             onViewDetails={handleViewDetails}
+            isLoading={isLoading}
+            onRefresh={handleRefresh}
           />
         ) : (
           <IonRow>

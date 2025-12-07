@@ -1,4 +1,5 @@
-import { IonButton, IonCard, IonCardContent, IonCol, IonInput, IonRow, IonToggle } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCol, IonIcon, IonInput, IonRow, IonToggle } from '@ionic/react';
+import { refreshOutline } from 'ionicons/icons';
 import { IUser } from '../../interfaces/user.interface';
 import styles from './Attendance.module.scss';
 import { RefetchType } from '../../types';
@@ -10,9 +11,11 @@ interface Props {
   refetch: RefetchType;
   handleSearchByName: (name: string) => void;
   onViewDetails: (userId: string) => void;
+  isLoading: boolean;
+  onRefresh: () => void;
 }
 
-const MobileView = ({ users, refetch, handleSearchByName, onViewDetails }: Props) => {
+const MobileView = ({ users, refetch, handleSearchByName, onViewDetails, isLoading, onRefresh }: Props) => {
   const { markAsArrived } = useUser();
   const [name, setName] = useState<string>('');
 
@@ -34,9 +37,14 @@ const MobileView = ({ users, refetch, handleSearchByName, onViewDetails }: Props
                 }}
               />
             </IonCol>
-            <IonCol size='12'>
+            <IonCol size='9'>
               <IonButton type='button' color='light' expand='block' onClick={() => handleSearchByName(name)}>
                 Buscar
+              </IonButton>
+            </IonCol>
+            <IonCol size='3'>
+              <IonButton type='button' color='light' expand='block' onClick={onRefresh} disabled={isLoading}>
+                <IonIcon icon={refreshOutline} />
               </IonButton>
             </IonCol>
           </IonRow>

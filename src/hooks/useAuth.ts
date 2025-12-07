@@ -12,6 +12,9 @@ export const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: login,
+    onMutate: () => {
+      toast.loading('Iniciando sesión...');
+    },
     onSuccess: async (data) => {
       // Store both access and refresh tokens in Capacitor Preferences
       await Preferences.set({ key: 'accessToken', value: data.accessToken });
@@ -21,23 +24,27 @@ export const useAuth = () => {
       setUser(data.user);
 
       // Show success toast
+      toast.dismissAll();
       toast.success(`¡Bienvenido de nuevo, ${data.user.firstName}!`);
 
       // Redirect to dashboard
       router.push('/dashboard', 'root', 'replace');
     },
     onError: () => {
+      toast.dismissAll();
       toast.error('Credenciales inválidas');
     },
   });
 
   const logout = async () => {
+    toast.loading('Cerrando sesión...');
     // Clear both tokens from Capacitor Preferences
     await Preferences.remove({ key: 'accessToken' });
     await Preferences.remove({ key: 'refreshToken' });
 
     // Clear user data from Zustand
     clearUser();
+    toast.dismissAll();
     toast.success('Sesión cerrada con éxito');
     router.push('/auth/login', 'root', 'replace');
   };

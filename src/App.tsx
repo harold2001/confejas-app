@@ -39,11 +39,13 @@ import '@ionic/react/css/palettes/dark.always.css';
 import './theme/variables.css';
 import Users from './pages/users/Users';
 import { ROUTES } from './constants/routes';
+import { ROLES } from './constants/roles';
 import ConfirmAttendance from './pages/attendance/confirm/ConfirmAttendance';
 import UserForm from './pages/users/form/UserForm';
 import Attendance from './pages/attendance/Attendance';
 import AttendanceDetails from './pages/attendance/details/AttendanceDetails';
 import UserDetails from './pages/users/details/UserDetails';
+import Rooms from './pages/rooms/Rooms';
 
 setupIonicReact();
 
@@ -96,6 +98,12 @@ const App = () => {
             <ProtectedRoute path={ROUTES.PROFILE} exact={true} component={Profile} />
             <ProtectedRoute path={ROUTES.ATTENDANCE_DETAILS} exact={true} component={AttendanceDetails} />
             <ProtectedRoute path={ROUTES.ATTENDANCE} exact={true} component={Attendance} />
+            <ProtectedRoute
+              path={ROUTES.ROOMS}
+              exact={true}
+              component={Rooms}
+              allowedRoles={[ROLES.ADMIN, ROLES.STAFF]}
+            />
             {/* Add more protected routes here:
             <ProtectedRoute path='/settings' exact={true} component={Settings} />
             <ProtectedRoute path='/users' exact={true} component={Users} />

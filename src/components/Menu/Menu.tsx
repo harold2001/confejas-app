@@ -10,7 +10,7 @@ import {
   IonNote,
 } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
-import { logOutOutline, peopleOutline, homeOutline, checkmarkDoneOutline } from 'ionicons/icons';
+import { logOutOutline, peopleOutline, homeOutline, checkmarkDoneOutline, bedOutline } from 'ionicons/icons';
 import './Menu.css';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -37,6 +37,11 @@ const appPages: AppPage[] = [
     title: 'Participantes',
     url: ROUTES.USERS,
     icon: peopleOutline,
+  },
+  {
+    title: 'Habitaciones',
+    url: ROUTES.ROOMS,
+    icon: bedOutline,
   },
 ];
 

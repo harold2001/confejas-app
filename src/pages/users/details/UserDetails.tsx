@@ -46,10 +46,10 @@ const UserDetails = () => {
   const InfoRow = ({ label, value }: { label: string; value: string | number | undefined | null }) => (
     <IonRow className={styles.infoRow}>
       <IonCol size='12' sizeMd='5' className={styles.infoLabel}>
-        <strong>{label}</strong>
+        {label}
       </IonCol>
       <IonCol size='12' sizeMd='7' className={styles.infoValue}>
-        {value || 'N/A'}
+        <strong>{value || 'N/A'}</strong>
       </IonCol>
     </IonRow>
   );
@@ -57,10 +57,12 @@ const UserDetails = () => {
   const BooleanRow = ({ label, value }: { label: string; value: boolean | undefined }) => (
     <IonRow className={styles.infoRow}>
       <IonCol size='12' sizeMd='5' className={styles.infoLabel}>
-        <strong>{label}</strong>
+        {label}
       </IonCol>
       <IonCol size='12' sizeMd='7' className={styles.infoValue}>
-        <IonBadge color={value ? 'success' : 'danger'}>{value ? 'Sí' : 'No'}</IonBadge>
+        <IonBadge color={value ? 'success' : 'danger'}>
+          <strong>{value ? 'Sí' : 'No'}</strong>
+        </IonBadge>
       </IonCol>
     </IonRow>
   );
@@ -176,8 +178,6 @@ const UserDetails = () => {
               <InfoRow label='Teléfono' value={user?.phone} />
               <InfoRow label='Email' value={user?.email} />
               <InfoRow label='Dirección' value={user?.address} />
-              <InfoRow label='Región' value={user?.region} />
-              <InfoRow label='Departamento' value={user?.department} />
             </IonCardContent>
           </IonCard>
 
@@ -225,18 +225,29 @@ const UserDetails = () => {
             </IonCardHeader>
             <IonCardContent>
               <InfoRow label='Compañía' value={user?.company?.name} />
+              <InfoRow label='Habitación' value={user?.userRooms?.[0]?.room?.roomNumber} />
               <InfoRow label='Código de Llave' value={user?.keyCode} />
               <BooleanRow label='Ha Llegado' value={user?.hasArrived} />
+            </IonCardContent>
+          </IonCard>
+
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Historial de Habitaciones</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
               {user?.userRooms && user?.userRooms.length > 0 ? (
-                user?.userRooms.map((userRoom, index) => (
-                  <div key={userRoom.id} className={styles.roomSection}>
-                    <h4>Habitación {index + 1}</h4>
-                    <InfoRow label='Número de Habitación' value={userRoom.room?.roomNumber} />
-                    <InfoRow label='Edificio' value={userRoom.room?.floor?.building?.name} />
-                    <InfoRow label='Piso' value={userRoom.room?.floor?.number} />
-                    <InfoRow label='Tipo de Habitación' value={userRoom.room?.roomType?.name} />
-                  </div>
-                ))
+                <>
+                  {user.userRooms.map((userRoom, index) => (
+                    <div key={userRoom.id} className={styles.roomSection}>
+                      <h4>Habitación {index + 1}</h4>
+                      <InfoRow label='Número de Habitación' value={userRoom.room?.roomNumber} />
+                      <InfoRow label='Edificio' value={userRoom.room?.floor?.building?.name} />
+                      <InfoRow label='Piso' value={userRoom.room?.floor?.number} />
+                      <InfoRow label='Tipo de Habitación' value={userRoom.room?.roomType?.name} />
+                    </div>
+                  ))}
+                </>
               ) : (
                 <InfoRow label='Habitación' value='No asignada' />
               )}

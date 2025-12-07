@@ -10,6 +10,6 @@ export const ROUTES = {
   EDIT_USER: '/users/edit/:id',
   ATTENDANCE: '/attendance',
   ATTENDANCE_DETAILS: '/attendance/:id',
-  // TODO: La ruta será /attendance/verify/:token y se debe enviar ese token a la API para verificar la asistencia
   CONFIRM_ATTENDANCE: '/attendance/verify/:token',
+  ROOMS: '/rooms',
 };

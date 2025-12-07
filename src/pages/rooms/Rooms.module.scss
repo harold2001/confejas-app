@@ -1,0 +1,160 @@
+.roomsContainer {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.buildingTabs {
+  margin-bottom: 1rem;
+
+  ion-segment-button {
+    --indicator-color: var(--ion-color-light);
+    --color-checked: var(--ion-color-light);
+    --border-color: var(--ion-color-light);
+  }
+}
+
+.accordionGroup {
+  ion-accordion {
+    ion-item[slot='header'] {
+      --background: var(--ion-color-primary);
+      --color: var(--ion-color-primary-contrast);
+
+      ion-label {
+        h2 {
+          font-size: 1.2rem;
+          margin-bottom: 5px;
+        }
+
+        p {
+          font-size: 0.9rem;
+          color: var(--ion-color-step-500) !important;
+        }
+      }
+    }
+  }
+}
+
+.filtersSection {
+  margin-bottom: 1.5rem;
+}
+
+.searchRoom {
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.filterChips,
+.floorFilter {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.noResults {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+  color: var(--ion-color-medium);
+}
+
+.floorContent {
+  padding: 1rem;
+}
+
+.roomCard {
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.full {
+    opacity: 0.8;
+  }
+}
+
+.roomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+
+  ion-card-title {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+}
+
+.roomType {
+  color: var(--ion-color-medium);
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.roomInfo {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--ion-color-primary-contrast);
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+.occupantsList {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: var(--ion-color-primary-tint);
+  border-radius: 8px;
+}
+
+.occupantsTitle {
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--ion-color-primary-contrast);
+}
+
+.occupantName {
+  margin: 0.25rem 0;
+  font-size: 1rem;
+  display: block;
+}
+
+.assignButton {
+  margin-top: 1rem;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .roomsContainer {
+    padding: 0.5rem;
+  }
+
+  .buildingTabs {
+    font-size: 0.875rem;
+  }
+
+  .roomInfo {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filterChips,
+  .floorFilter {
+    justify-content: center;
+  }
+}

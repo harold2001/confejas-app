@@ -11,7 +11,6 @@ import {
   IonCol,
   IonSpinner,
   IonBadge,
-  useIonToast,
   IonAlert,
 } from '@ionic/react';
 import {
@@ -40,12 +39,13 @@ import QUERY_KEYS from '../../constants/query-keys';
 import { UserStatisticsDto } from '../../interfaces/dto/statistics.dto';
 import { useAuthStore } from '../../store/useAuthStore';
 import { ROLES } from '../../constants/roles';
+import { useSocket } from '../../hooks/useSocket';
+import toast from 'react-hot-toast';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
 const Dashboard = () => {
   const { isMobile } = usePlatform();
-  const [presentToast] = useIonToast();
   const user = useAuthStore((state) => state.user);
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
 
@@ -61,62 +61,38 @@ const Dashboard = () => {
     refetchOnReconnect: 'always',
   });
 
+  // Socket.IO connection for real-time statistics updates
+  useSocket(() => {
+    refetch();
+  });
+
   const sendQrMutation = useMutation({
     mutationFn: sendQrToUsers,
+    onMutate: () => {
+      toast.loading('Enviando correos...');
+    },
     onSuccess: (data) => {
-      presentToast({
-        message: 'Correos enviados',
-        duration: 3000,
-        position: 'top',
-        color: 'success',
-      });
+      toast.dismissAll();
+      toast.success('Correos enviados');
 
       // Show detailed report
       if (data.failedCount > 0) {
-        presentToast({
-          message: `${data.successCount} exitosos, ${data.failedCount} fallidos`,
-          duration: 5000,
-          position: 'bottom',
-          color: 'warning',
-        });
+        toast.error(`${data.successCount} exitosos, ${data.failedCount} fallidos`);
       }
     },
     onError: () => {
-      presentToast({
-        message: 'Error al enviar los correos',
-        duration: 3000,
-        position: 'top',
-        color: 'danger',
-      });
+      toast.dismissAll();
+      toast.error('Error al enviar los correos');
     },
   });
 
   const isAdmin = user?.roles?.some((role) => role.name === ROLES.ADMIN);
 
   const handleRefresh = async () => {
-    presentToast({
-      message: 'Cargando...',
-      duration: 500,
-      position: 'top',
-      color: 'primary',
-    });
-
-    try {
-      await refetch();
-      presentToast({
-        message: 'Datos actualizados',
-        duration: 2000,
-        position: 'top',
-        color: 'success',
-      });
-    } catch {
-      presentToast({
-        message: 'Error al actualizar los datos',
-        duration: 2000,
-        position: 'top',
-        color: 'danger',
-      });
-    }
+    toast.loading('Cargando...');
+    await refetch();
+    toast.dismiss();
+    toast.success('Datos actualizados');
   };
 
   const handleSendQr = () => {

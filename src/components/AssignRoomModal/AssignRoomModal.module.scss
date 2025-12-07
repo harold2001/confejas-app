@@ -1,0 +1,126 @@
+.assignModalContent {
+  padding: 1rem;
+}
+
+.roomInfoBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--ion-color-primary);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0.25rem 0;
+    font-size: 0.875rem;
+  }
+}
+
+.modalFilters {
+  margin-bottom: 1rem;
+
+  ion-searchbar {
+    padding: 0;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.resultsInfo {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+}
+
+.noUsers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+  color: var(--ion-color-medium);
+}
+
+.noUsersIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.userItem {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+
+  ion-label {
+    h2 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: var(--ion-color-medium);
+      margin-bottom: 5px;
+    }
+  }
+}
+
+.userCurrentRoom {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  color: var(--ion-color-warning) !important;
+  font-weight: 500;
+}
+
+.roomIcon {
+  font-size: 1rem;
+}
+
+.userBadges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.userBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .roomInfoBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .userBadges {
+    align-items: flex-start;
+  }
+
+  .userItem {
+    --padding-start: 0.75rem;
+    --padding-end: 0.75rem;
+  }
+}
