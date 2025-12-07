@@ -26,7 +26,7 @@ export const useAuth = () => {
       // Redirect to dashboard
       router.push('/dashboard', 'root', 'replace');
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Credenciales inválidas');
     },
   });

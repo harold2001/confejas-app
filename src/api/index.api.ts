@@ -27,7 +27,6 @@ const processQueue = (error: unknown, token: string | null = null) => {
 axiosApi.interceptors.request.use(async (config: InternalAxiosRequestConfig<unknown>) => {
   const { value: token } = await Preferences.get({ key: 'accessToken' });
   if (token) {
-    // eslint-disable-next-line no-param-reassign
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

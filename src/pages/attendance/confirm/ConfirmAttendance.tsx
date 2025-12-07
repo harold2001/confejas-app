@@ -13,8 +13,9 @@ import {
   IonText,
   IonBadge,
 } from '@ionic/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 import { checkmarkCircleOutline, closeCircleOutline, homeOutline } from 'ionicons/icons';
 import { verifyAttendance } from '../../../api/users.api';
 import { ROUTES } from '../../../constants/routes';
@@ -49,31 +50,15 @@ const ConfirmAttendance = () => {
   const { isMobile } = usePlatform();
   const isMobileView = isMobile();
 
-  const [loading, setLoading] = useState(true);
-  const [response, setResponse] = useState<VerifyAttendanceResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const verifyMutation = useMutation<VerifyAttendanceResponse, Error, string>({
+    mutationFn: verifyAttendance,
+  });
 
   useEffect(() => {
-    const verifyToken = async () => {
-      try {
-        setLoading(true);
-        const result = await verifyAttendance(token);
-        setResponse(result);
-        setError(null);
-      } catch (err) {
-        const errorMessage =
-          (err as { response?: { data?: { message?: string } } }).response?.data?.message ||
-          'Error al verificar la asistencia';
-        setError(errorMessage);
-        setResponse(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (token) {
-      verifyToken();
+      verifyMutation.mutate(token);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const handleGoToAttendance = () => {
@@ -81,14 +66,14 @@ const ConfirmAttendance = () => {
   };
 
   const getFullName = () => {
-    if (!response?.user) return '';
-    const { firstName, middleName, paternalLastName, maternalLastName } = response.user;
+    if (!verifyMutation.data?.user) return '';
+    const { firstName, middleName, paternalLastName, maternalLastName } = verifyMutation.data.user;
     return [firstName, middleName, paternalLastName, maternalLastName].filter(Boolean).join(' ');
   };
 
   const getRoomNumber = () => {
-    if (!response?.user?.userRooms?.[0]?.room) return 'No asignada';
-    return response.user.userRooms[0].room.roomNumber;
+    if (!verifyMutation.data?.user?.userRooms?.[0]?.room) return 'No asignada';
+    return verifyMutation.data.user.userRooms[0].room.roomNumber;
   };
 
   return (
@@ -96,7 +81,7 @@ const ConfirmAttendance = () => {
       {isMobileView && <Header title='Confirmar Asistencia' />}
       <IonContent className='ion-padding'>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          {loading ? (
+          {verifyMutation.isPending ? (
             <IonCard color='primary'>
               <IonCardContent>
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -105,7 +90,7 @@ const ConfirmAttendance = () => {
                 </div>
               </IonCardContent>
             </IonCard>
-          ) : error ? (
+          ) : verifyMutation.isError ? (
             <>
               <IonCard color='danger'>
                 <IonCardHeader>
@@ -115,7 +100,10 @@ const ConfirmAttendance = () => {
                   </IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                  <p style={{ fontSize: '1.1rem', margin: '1rem 0' }}>{error}</p>
+                  <p style={{ fontSize: '1.1rem', margin: '1rem 0' }}>
+                    {(verifyMutation.error as { response?: { data?: { message?: string } } })?.response?.data
+                      ?.message || 'Error al verificar la asistencia'}
+                  </p>
                 </IonCardContent>
               </IonCard>
 
@@ -124,7 +112,7 @@ const ConfirmAttendance = () => {
                 Ir al Inicio
               </IonButton>
             </>
-          ) : response?.success ? (
+          ) : verifyMutation.data?.success ? (
             <>
               <IonCard color='success'>
                 <IonCardHeader>
@@ -134,7 +122,7 @@ const ConfirmAttendance = () => {
                   </IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                  <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>{response.message}</p>
+                  <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>{verifyMutation?.data?.message}</p>
                 </IonCardContent>
               </IonCard>
 
@@ -160,17 +148,21 @@ const ConfirmAttendance = () => {
                         <p style={{ margin: '0.5rem 0' }}>Primer Nombre:</p>
                       </IonText>
                       <IonText>
-                        <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>{response.user?.firstName}</p>
+                        <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>
+                          {verifyMutation?.data?.user?.firstName}
+                        </p>
                       </IonText>
                     </IonCol>
 
-                    {response.user?.middleName && (
+                    {verifyMutation?.data?.user?.middleName && (
                       <IonCol size='12' sizeMd='6'>
                         <IonText color='medium'>
                           <p style={{ margin: '0.5rem 0' }}>Segundo Nombre:</p>
                         </IonText>
                         <IonText>
-                          <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>{response.user.middleName}</p>
+                          <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>
+                            {verifyMutation?.data?.user?.middleName}
+                          </p>
                         </IonText>
                       </IonCol>
                     )}
@@ -182,17 +174,21 @@ const ConfirmAttendance = () => {
                         <p style={{ margin: '0.5rem 0' }}>Apellido Paterno:</p>
                       </IonText>
                       <IonText>
-                        <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>{response.user?.paternalLastName}</p>
+                        <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>
+                          {verifyMutation?.data?.user?.paternalLastName}
+                        </p>
                       </IonText>
                     </IonCol>
 
-                    {response.user?.maternalLastName && (
+                    {verifyMutation?.data?.user?.maternalLastName && (
                       <IonCol size='12' sizeMd='6'>
                         <IonText color='medium'>
                           <p style={{ margin: '0.5rem 0' }}>Apellido Materno:</p>
                         </IonText>
                         <IonText>
-                          <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>{response.user.maternalLastName}</p>
+                          <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}>
+                            {verifyMutation?.data?.user?.maternalLastName}
+                          </p>
                         </IonText>
                       </IonCol>
                     )}
@@ -204,7 +200,7 @@ const ConfirmAttendance = () => {
                         <p style={{ margin: '0.5rem 0' }}>Compañía:</p>
                       </IonText>
                       <IonBadge color='tertiary' style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}>
-                        {response.user?.company?.name || 'No asignada'}
+                        {verifyMutation?.data?.user?.company?.name || 'No asignada'}
                       </IonBadge>
                     </IonCol>
 
