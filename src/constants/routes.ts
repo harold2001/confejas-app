@@ -12,4 +12,5 @@ export const ROUTES = {
   ATTENDANCE_DETAILS: '/attendance/:id',
   CONFIRM_ATTENDANCE: '/attendance/verify/:token',
   ROOMS: '/rooms',
+  QR: '/qr',
 };

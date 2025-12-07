@@ -31,6 +31,7 @@ import { InputIcon } from 'primereact/inputicon';
 import { IconField } from 'primereact/iconfield';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 import MobileView from './MobileView';
 import styles from './Users.module.scss';
 import { getStakes } from '../../api/stakes.api';
@@ -73,7 +74,7 @@ const Users = () => {
     hasMedicalTreatment: null as boolean | null,
     keyCode: '',
     ward: '',
-    stakeId: '',
+    stakeIds: [] as string[],
     stakeName: '',
     age: '',
     isMemberOfTheChurch: null as boolean | null,
@@ -129,7 +130,7 @@ const Users = () => {
           }),
           ...(appliedFilters.keyCode && { keyCode: appliedFilters.keyCode }),
           ...(appliedFilters.ward && { ward: appliedFilters.ward }),
-          ...(appliedFilters.stakeId && { stakeId: appliedFilters.stakeId }),
+          ...(appliedFilters.stakeIds.length > 0 && { stakeIds: appliedFilters.stakeIds }),
           ...(appliedFilters.stakeName && { stakeName: appliedFilters.stakeName }),
           ...(appliedFilters.age && { age: appliedFilters.age }),
           ...(appliedFilters.isMemberOfTheChurch !== null && {
@@ -267,7 +268,7 @@ const Users = () => {
     setFirst(0);
   };
 
-  const handleFilterChange = (field: string, value: string | boolean | null) => {
+  const handleFilterChange = (field: string, value: string | boolean | null | string[]) => {
     setFiltersDraft((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -294,7 +295,7 @@ const Users = () => {
       hasMedicalTreatment: null,
       keyCode: '',
       ward: '',
-      stakeId: '',
+      stakeIds: [],
       stakeName: '',
       age: '',
       isMemberOfTheChurch: null,
@@ -385,14 +386,15 @@ const Users = () => {
 
               {/* Stake */}
               <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
-                <IonLabel className={styles.filterLabel}>Estaca</IonLabel>
-                <Dropdown
-                  value={filtersDraft.stakeId}
-                  onChange={(e) => handleFilterChange('stakeId', e.value)}
+                <IonLabel className={styles.filterLabel}>Estacas</IonLabel>
+                <MultiSelect
+                  value={filtersDraft.stakeIds}
+                  onChange={(e) => handleFilterChange('stakeIds', e.value)}
                   options={stakeOptions}
-                  placeholder='Seleccionar Estaca'
+                  placeholder='Seleccionar Estacas'
                   className={styles.filterInput}
-                  showClear
+                  display='chip'
+                  maxSelectedLabels={2}
                 />
               </IonCol>
 
@@ -605,9 +607,11 @@ const Users = () => {
                     field='stake.name'
                     header='Estaca / Barrio'
                     body={(rowData: IUser) =>
-                      `${rowData.stake?.name ? rowData.stake?.name?.replace('Estaca ', '') : 'N/A'} / ${
-                        rowData.ward || 'N/A'
-                      }`
+                      `${
+                        rowData.stake?.name
+                          ? rowData.stake?.name?.replace('Estaca ', '')?.replace('Distrito ', '')
+                          : 'N/A'
+                      } / ${rowData.ward || 'N/A'}`
                     }
                   />
                   <Column

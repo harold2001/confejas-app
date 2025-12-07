@@ -11,7 +11,6 @@ import {
   IonCol,
   IonSpinner,
   IonBadge,
-  IonAlert,
 } from '@ionic/react';
 import {
   personAddOutline,
@@ -24,21 +23,17 @@ import {
   medkitOutline,
   shirtOutline,
   businessOutline,
-  mailOutline,
 } from 'ionicons/icons';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import styles from './Dashboard.module.scss';
 import { ROUTES } from '../../constants/routes';
 import usePlatform from '../../hooks/usePlatform';
 import Header from '../../components/Header/Header';
-import { getStatistics, sendQrToUsers } from '../../api/users.api';
+import { getStatistics } from '../../api/users.api';
 import QUERY_KEYS from '../../constants/query-keys';
 import { UserStatisticsDto } from '../../interfaces/dto/statistics.dto';
-import { useAuthStore } from '../../store/useAuthStore';
-import { ROLES } from '../../constants/roles';
 import { useSocket } from '../../hooks/useSocket';
 import toast from 'react-hot-toast';
 
@@ -46,8 +41,6 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
 
 const Dashboard = () => {
   const { isMobile } = usePlatform();
-  const user = useAuthStore((state) => state.user);
-  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
 
   const {
     data: statistics,
@@ -66,42 +59,11 @@ const Dashboard = () => {
     refetch();
   });
 
-  const sendQrMutation = useMutation({
-    mutationFn: sendQrToUsers,
-    onMutate: () => {
-      toast.loading('Enviando correos...');
-    },
-    onSuccess: (data) => {
-      toast.dismissAll();
-      toast.success('Correos enviados');
-
-      // Show detailed report
-      if (data.failedCount > 0) {
-        toast.error(`${data.successCount} exitosos, ${data.failedCount} fallidos`);
-      }
-    },
-    onError: () => {
-      toast.dismissAll();
-      toast.error('Error al enviar los correos');
-    },
-  });
-
-  const isAdmin = user?.roles?.some((role) => role.name === ROLES.ADMIN);
-
   const handleRefresh = async () => {
     toast.loading('Cargando...');
     await refetch();
     toast.dismiss();
     toast.success('Datos actualizados');
-  };
-
-  const handleSendQr = () => {
-    setShowConfirmAlert(true);
-  };
-
-  const handleConfirmSendQr = () => {
-    setShowConfirmAlert(false);
-    sendQrMutation.mutate();
   };
 
   // Chart data configurations
@@ -205,43 +167,6 @@ const Dashboard = () => {
     <IonPage>
       {isMobile() && <Header title='Dashboard' />}
       <IonContent className='ion-padding'>
-        {/* Send QR Button - Only for Admin */}
-        {isAdmin && (
-          <IonRow>
-            <IonCol>
-              <IonCard color='primary'>
-                <IonCardHeader>
-                  <IonCardTitle>
-                    <IonIcon icon={mailOutline} style={{ marginRight: '0.5rem' }} />
-                    Administración
-                  </IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonButton
-                    expand='block'
-                    fill='solid'
-                    color='warning'
-                    onClick={handleSendQr}
-                    disabled={sendQrMutation.isPending}
-                  >
-                    {sendQrMutation.isPending ? (
-                      <>
-                        <IonSpinner name='crescent' style={{ marginRight: '0.5rem' }} />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <IonIcon slot='start' icon={mailOutline} />
-                        Enviar QR a Usuarios
-                      </>
-                    )}
-                  </IonButton>
-                </IonCardContent>
-              </IonCard>
-            </IonCol>
-          </IonRow>
-        )}
-
         {/* Quick Actions */}
         <IonRow>
           <IonCol>
@@ -543,27 +468,6 @@ const Dashboard = () => {
             </IonRow>
           </>
         )}
-
-        {/* Confirmation Alert for Sending QR */}
-        <IonAlert
-          isOpen={showConfirmAlert}
-          onDidDismiss={() => setShowConfirmAlert(false)}
-          header='Confirmar Envío Masivo'
-          message='¿Está seguro de que desea enviar los códigos QR a todos los participantes pendientes? Este proceso puede tomar varios minutos.'
-          buttons={[
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-              cssClass: 'alert-button-cancel',
-            },
-            {
-              text: 'Enviar',
-              handler: handleConfirmSendQr,
-              cssClass: 'alert-button-confirm',
-            },
-          ]}
-          cssClass='custom-alert'
-        />
       </IonContent>
     </IonPage>
   );

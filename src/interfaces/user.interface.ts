@@ -35,6 +35,7 @@ export interface IUser extends BaseInterface {
   healthInsurance?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
+  qrSent?: boolean;
   roles: IRole[];
   userRooms: IUserRoom[];
 }

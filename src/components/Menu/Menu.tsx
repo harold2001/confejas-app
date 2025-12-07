@@ -10,11 +10,19 @@ import {
   IonNote,
 } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
-import { logOutOutline, peopleOutline, homeOutline, checkmarkDoneOutline, bedOutline } from 'ionicons/icons';
+import {
+  logOutOutline,
+  peopleOutline,
+  homeOutline,
+  checkmarkDoneOutline,
+  bedOutline,
+  qrCodeOutline,
+} from 'ionicons/icons';
 import './Menu.css';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTES } from '../../constants/routes';
+import { ROLES } from '../../constants/roles';
 
 interface AppPage {
   url: string;
@@ -27,6 +35,11 @@ const appPages: AppPage[] = [
     title: 'Inicio',
     url: ROUTES.DASHBOARD,
     icon: homeOutline,
+  },
+  {
+    title: 'QR',
+    url: ROUTES.QR,
+    icon: qrCodeOutline,
   },
   {
     title: 'Asistencia',
@@ -58,22 +71,39 @@ const Menu = () => {
             Bienvenido, {user?.firstName} {user?.paternalLastName}!
           </IonListHeader>
           <IonNote>{user?.email}</IonNote>
-          {appPages.map((appPage, index) => {
-            return (
-              <IonMenuToggle key={index} autoHide={false}>
-                <IonItem
-                  className={location.pathname === appPage.url ? 'selected' : ''}
-                  routerLink={appPage.url}
-                  routerDirection='none'
-                  lines='none'
-                  detail={false}
-                >
-                  <IonIcon aria-hidden='true' slot='start' icon={appPage.icon} />
-                  <IonLabel>{appPage.title}</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-            );
-          })}
+          {appPages
+            .filter((page) => {
+              const isAdmin = user?.roles?.some((role) => role.name === ROLES.ADMIN);
+              const isStaff = user?.roles?.some((role) => role.name === ROLES.STAFF);
+
+              // Only show QR page for Admin users
+              if (page.url === ROUTES.QR) {
+                return isAdmin;
+              }
+
+              // Show Dashboard to everyone, rest only to Admin or Staff
+              if (page.url === ROUTES.DASHBOARD) {
+                return true;
+              }
+
+              return isAdmin || isStaff;
+            })
+            .map((appPage, index) => {
+              return (
+                <IonMenuToggle key={index} autoHide={false}>
+                  <IonItem
+                    className={location.pathname === appPage.url ? 'selected' : ''}
+                    routerLink={appPage.url}
+                    routerDirection='none'
+                    lines='none'
+                    detail={false}
+                  >
+                    <IonIcon aria-hidden='true' slot='start' icon={appPage.icon} />
+                    <IonLabel>{appPage.title}</IonLabel>
+                  </IonItem>
+                </IonMenuToggle>
+              );
+            })}
         </IonList>
 
         <IonList>

@@ -46,6 +46,7 @@ import Attendance from './pages/attendance/Attendance';
 import AttendanceDetails from './pages/attendance/details/AttendanceDetails';
 import UserDetails from './pages/users/details/UserDetails';
 import Rooms from './pages/rooms/Rooms';
+import QR from './pages/qr/QR';
 
 setupIonicReact();
 
@@ -98,6 +99,7 @@ const App = () => {
             <ProtectedRoute path={ROUTES.PROFILE} exact={true} component={Profile} />
             <ProtectedRoute path={ROUTES.ATTENDANCE_DETAILS} exact={true} component={AttendanceDetails} />
             <ProtectedRoute path={ROUTES.ATTENDANCE} exact={true} component={Attendance} />
+            <ProtectedRoute path={ROUTES.QR} exact={true} component={QR} allowedRoles={[ROLES.ADMIN]} />
             <ProtectedRoute
               path={ROUTES.ROOMS}
               exact={true}

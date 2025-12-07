@@ -6,6 +6,7 @@ export enum PaginationOrderDir {
 export class PaginationDto {
   limit?: number;
   skip?: number;
+  page?: number;
   orderBy?: string;
   orderDir?: PaginationOrderDir;
 }

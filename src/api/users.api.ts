@@ -60,7 +60,7 @@ export const verifyAttendance = async (token: string) => {
   return res.data;
 };
 
-export const sendQrToUsers = async () => {
-  const res = await axiosApi.post(`${route}/send-qr`);
+export const sendQrToUsers = async (userIds: string[]) => {
+  const res = await axiosApi.post(`${route}/send-qr`, { userIds });
   return res.data;
 };
