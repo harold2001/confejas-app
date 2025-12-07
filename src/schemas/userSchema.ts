@@ -39,6 +39,8 @@ export const createUserSchema = z.object({
   healthInsurance: z.string().optional(),
   emergencyContactName: z.string().optional(),
   emergencyContactPhone: z.string().optional(),
+  companyId: z.string().optional(),
+  roomId: z.string().optional(),
 });
 
 export type CreateUserFormData = z.infer<typeof createUserSchema>;
@@ -76,6 +78,8 @@ export const updateUserSchema = z.object({
   healthInsurance: z.string().optional(),
   emergencyContactName: z.string().optional(),
   emergencyContactPhone: z.string().optional(),
+  companyId: z.string().optional(),
+  roomId: z.string().optional(),
 });
 
 export type UpdateUserFormData = z.infer<typeof updateUserSchema>;

@@ -8,6 +8,8 @@ const QUERY_KEYS = {
   GET_STATISTICS: 'getStatistics',
   GET_ROOMS_WITH_DETAILS: 'getRoomsWithDetails',
   GET_USERS_FOR_ROOM_ASSIGNMENT: 'getUsersForRoomAssignment',
+  GET_COMPANIES_WITH_COUNT: 'getCompaniesWithCount',
+  GET_ROOMS_WITH_COUNT: 'getRoomsWithCount',
 };
 
 export default QUERY_KEYS;

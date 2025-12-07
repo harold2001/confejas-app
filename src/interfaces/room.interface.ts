@@ -10,3 +10,22 @@ export interface IRoom extends BaseInterface {
   totalBeds: number;
   userRooms: IUserRoom[];
 }
+
+export interface IRoomWithCount extends BaseInterface {
+  roomNumber: string;
+  totalBeds: number;
+  occupiedBeds: number;
+  availableBeds: number;
+  floor: {
+    id: string;
+    number: number;
+    building: {
+      id: string;
+      name: string;
+    } | null;
+  } | null;
+  roomType: {
+    id: string;
+    name: string;
+  } | null;
+}

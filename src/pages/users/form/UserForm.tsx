@@ -30,6 +30,8 @@ import {
 import { ROUTES } from '../../../constants/routes';
 import { getStakes } from '../../../api/stakes.api';
 import { getRoles } from '../../../api/roles.api';
+import { getCompaniesWithCount } from '../../../api/companies.api';
+import { getRoomsWithCount } from '../../../api/rooms.api';
 import { ROLES } from '../../../constants/roles';
 import { arrowBackOutline } from 'ionicons/icons';
 import { useUser } from '../../../hooks/useUser';
@@ -67,6 +69,16 @@ const UserForm = () => {
     queryFn: getRoles,
   });
 
+  const { data: companies, isLoading: companiesLoading } = useQuery({
+    queryKey: [QUERY_KEYS.GET_COMPANIES_WITH_COUNT],
+    queryFn: getCompaniesWithCount,
+  });
+
+  const { data: rooms, isLoading: roomsLoading } = useQuery({
+    queryKey: [QUERY_KEYS.GET_ROOMS_WITH_COUNT],
+    queryFn: getRoomsWithCount,
+  });
+
   const methods = useForm<CreateUserFormData | UpdateUserFormData>({
     resolver: zodResolver(isEditMode ? updateUserSchema : createUserSchema),
     defaultValues: {
@@ -95,6 +107,8 @@ const UserForm = () => {
       healthInsurance: '',
       emergencyContactName: '',
       emergencyContactPhone: '',
+      companyId: '',
+      roomId: '',
     },
   });
 
@@ -135,6 +149,8 @@ const UserForm = () => {
         healthInsurance: data.healthInsurance || '',
         emergencyContactName: data.emergencyContactName || '',
         emergencyContactPhone: data.emergencyContactPhone || '',
+        companyId: data.company?.id || '',
+        roomId: data.userRooms?.[0]?.room?.id || '',
       });
     }
   }, [data, reset, isEditMode]);
@@ -191,7 +207,7 @@ const UserForm = () => {
     <IonPage>
       <IonContent className='ion-padding'>
         <IonRow>
-          <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2' className={styles.headerCol}>
+          <IonCol size='12' sizeMd='11' offsetMd='0.5' sizeLg='10' offsetLg='1' className={styles.headerCol}>
             <IonButton routerLink={ROUTES.USERS} fill='clear' type='button' className={styles.backButton}>
               <IonIcon icon={arrowBackOutline} slot='start' />
               Volver
@@ -200,7 +216,7 @@ const UserForm = () => {
           </IonCol>
         </IonRow>
         <IonRow>
-          <IonCol size='12' sizeMd='10' offsetMd='1' sizeLg='8' offsetLg='2'>
+          <IonCol size='12' sizeMd='11' offsetMd='0.5' sizeLg='10' offsetLg='1'>
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmit, onErrors)}>
                 {/* Personal Information Section */}
@@ -324,15 +340,6 @@ const UserForm = () => {
                           required={false}
                         />
                       </IonCol>
-
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='department'
-                          label='Departamento'
-                          placeholder='Ingrese el departamento'
-                          required={false}
-                        />
-                      </IonCol>
                     </IonRow>
                   </IonCardContent>
                 </IonCard>
@@ -368,6 +375,81 @@ const UserForm = () => {
                         <IonLabel className='ion-margin-end'>¿Es miembro de la iglesia?</IonLabel>
                         <Controller
                           name='isMemberOfTheChurch'
+                          control={control}
+                          render={({ field }) => (
+                            <IonToggle
+                              checked={field.value}
+                              onIonChange={(e) => field.onChange(e.detail.checked)}
+                              color='success'
+                            />
+                          )}
+                        />
+                      </IonCol>
+                    </IonRow>
+                  </IonCardContent>
+                </IonCard>
+
+                {/* Accommodation Information Section */}
+                <IonCard color='primary'>
+                  <IonCardHeader>
+                    <IonCardTitle>Información de Alojamiento</IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonRow className='ion-align-items-center'>
+                      <IonCol size='12' sizeMd='6'>
+                        <SelectValidated
+                          name='companyId'
+                          label='Compañía'
+                          placeholder='Seleccione una compañía'
+                          options={
+                            companiesLoading
+                              ? [{ label: 'Cargando...', value: '' }]
+                              : companies?.map((company) => ({
+                                  label: `${company.name} - ${company.userCount}`,
+                                  value: company.id,
+                                })) || []
+                          }
+                          isDesktopBoolean={isDesktop()}
+                          interface='action-sheet'
+                          required={false}
+                        />
+                      </IonCol>
+
+                      <IonCol size='12' sizeMd='6'>
+                        <SelectValidated
+                          name='roomId'
+                          label='Habitación'
+                          placeholder='Seleccione una habitación'
+                          options={
+                            roomsLoading
+                              ? [{ label: 'Cargando...', value: '' }]
+                              : rooms?.map((room) => ({
+                                  label: `${room.floor?.building?.name || 'Sin edificio'}/${room.roomNumber} - Camas: ${
+                                    room.availableBeds
+                                  }/${room.totalBeds}`,
+                                  value: room.id,
+                                  cssClass: room.availableBeds === 0 ? 'room-full' : '',
+                                })) || []
+                          }
+                          isDesktopBoolean={isDesktop()}
+                          interface='action-sheet'
+                          required={false}
+                        />
+                      </IonCol>
+
+                      <IonCol size='12' sizeMd='6'>
+                        <InputValidated
+                          name='keyCode'
+                          label='Código de Llave'
+                          placeholder='Ingrese el código de llave'
+                          required={false}
+                        />
+                      </IonCol>
+
+                      <IonCol size='12' sizeMd='6' className='ion-margin-top'>
+                        <IonLabel className='ion-margin-end'>¿Ha llegado?</IonLabel>
+                        <Controller
+                          name='hasArrived'
                           control={control}
                           render={({ field }) => (
                             <IonToggle
@@ -482,31 +564,7 @@ const UserForm = () => {
                     <IonCardTitle>Información Adicional</IonCardTitle>
                   </IonCardHeader>
                   <IonCardContent>
-                    <IonRow className='ion-align-items-center'>
-                      <IonCol size='12' sizeMd='6'>
-                        <InputValidated
-                          name='keyCode'
-                          label='Código de Llave'
-                          placeholder='Ingrese el código de llave'
-                          required={false}
-                        />
-                      </IonCol>
-
-                      <IonCol size='12' sizeMd='6'>
-                        <IonLabel className='ion-margin-end'>¿Ha llegado?</IonLabel>
-                        <Controller
-                          name='hasArrived'
-                          control={control}
-                          render={({ field }) => (
-                            <IonToggle
-                              checked={field.value}
-                              onIonChange={(e) => field.onChange(e.detail.checked)}
-                              color='success'
-                            />
-                          )}
-                        />
-                      </IonCol>
-
+                    <IonRow>
                       <IonCol size='12'>
                         <TextareaValidated
                           name='notes'

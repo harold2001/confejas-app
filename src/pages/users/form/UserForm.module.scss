@@ -12,3 +12,11 @@
   height: 100%;
   padding: 2rem;
 }
+
+:global(.room-full) {
+  color: var(--ion-color-danger) !important;
+
+  .alert-radio-label {
+    color: var(--ion-color-danger) !important;
+  }
+}
