@@ -63,14 +63,6 @@ const Dashboard = () => {
 
   const sendQrMutation = useMutation({
     mutationFn: sendQrToUsers,
-    onMutate: () => {
-      presentToast({
-        message: 'Enviando correos, le notificaremos cuando termine.',
-        duration: 3000,
-        position: 'top',
-        color: 'primary',
-      });
-    },
     onSuccess: (data) => {
       presentToast({
         message: 'Correos enviados',
@@ -586,12 +578,15 @@ const Dashboard = () => {
             {
               text: 'Cancelar',
               role: 'cancel',
+              cssClass: 'alert-button-cancel',
             },
             {
               text: 'Enviar',
               handler: handleConfirmSendQr,
+              cssClass: 'alert-button-confirm',
             },
           ]}
+          cssClass='custom-alert'
         />
       </IonContent>
     </IonPage>
