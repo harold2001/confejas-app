@@ -43,7 +43,7 @@ const Header = ({
   return (
     <>
       {!!simple && (
-        <IonHeader className={`${styles.simpleHeader} ${className || ''}`}>
+        <IonHeader className={`${styles.simpleHeader} ${className || ''}`} color='primary'>
           <IonButtons slot='start'>
             {showBack && (
               <IonBackButton
@@ -53,7 +53,7 @@ const Header = ({
             )}
             {!showBack && (
               <IonMenuToggle>
-                <IonMenuButton />
+                <IonMenuButton color='light' />
               </IonMenuToggle>
             )}
           </IonButtons>
@@ -65,27 +65,27 @@ const Header = ({
       )}
 
       {!simple && (
-        <IonHeader className={`${styles.simpleHeader} ${className || ''}`}>
+        <IonHeader className={`${styles.simpleHeader} ${className || ''}`} color='primary'>
           <IonToolbar className={isIOS() ? styles.customToolbarPaddingiOs : styles.customToolbarPadding}>
             <IonButtons slot='start'>
               {showBack && <IonBackButton {...(defaultBackHref ? { defaultHref: defaultBackHref } : {})} />}
               {!showBack && (
                 <IonMenuToggle>
-                  <IonMenuButton />
+                  <IonMenuButton color='light' />
                 </IonMenuToggle>
               )}
             </IonButtons>
             <IonTitle>{title}</IonTitle>
             {onEdit && canSeeButton && (
               <IonButtons slot='end'>
-                <IonButton color='primary' fill='solid' onClick={onEdit}>
+                <IonButton color='light' fill='solid' onClick={onEdit}>
                   Editar
                 </IonButton>
               </IonButtons>
             )}
             {onAdd && canSeeButton && (
               <IonButtons slot='end'>
-                <IonButton className={styles.headerBtn} color='primary' fill='solid' onClick={onAdd}>
+                <IonButton className={styles.headerBtn} color='light' fill='solid' onClick={onAdd}>
                   {addText || <IonIcon icon={addOutline} />}
                 </IonButton>
               </IonButtons>

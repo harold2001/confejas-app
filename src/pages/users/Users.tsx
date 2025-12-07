@@ -627,7 +627,6 @@ const Users = () => {
                   <Column
                     field='userRooms.0.room.roomNumber'
                     header='Habitación'
-                    sortable
                     bodyStyle={{ textAlign: 'center' }}
                     headerStyle={{ textAlign: 'center' }}
                   />
@@ -639,9 +638,20 @@ const Users = () => {
                     headerStyle={{ textAlign: 'center' }}
                     sortable
                   />
-                  <Column field='medicalCondition' header='Condición Médica' sortable />
-                  <Column field='medicalTreatment' header='Tratamiento Médico' sortable />
-                  <Column field='phone' header='Teléfono' />
+                  <Column
+                    field='medicalCondition'
+                    header='Condición Médica'
+                    bodyStyle={{ textAlign: 'center' }}
+                    body={(rowData: IUser) => rowData.medicalCondition ?? 'No'}
+                    sortable
+                  />
+                  <Column
+                    field='medicalTreatment'
+                    header='Tratamiento Médico'
+                    headerStyle={{ textAlign: 'center' }}
+                    body={(rowData: IUser) => rowData.medicalTreatment ?? 'No'}
+                    sortable
+                  />
                   <Column header='Acciones' body={actionBodyTemplate} style={{ width: '12rem' }} />
                 </DataTable>
               </div>

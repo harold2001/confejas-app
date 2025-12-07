@@ -1,41 +1,38 @@
 import {
   IonButton,
   IonContent,
-  IonInput,
   IonPage,
   IonText,
   IonSpinner,
-  IonItem,
-  IonLabel,
   IonGrid,
   IonRow,
   IonCol,
+  IonCard,
+  IonCardContent,
 } from '@ionic/react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '../../schemas/loginSchema';
 import { useAuth } from '../../hooks/useAuth';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useEffect } from 'react';
 import { useIonRouter } from '@ionic/react';
-import styles from './Login.module.scss';
+import InputValidated from '../../components/Input/InputValidated';
 
 const Login = () => {
   const router = useIonRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
   const { login, isLoading } = useAuth();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+  const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
+
+  const { handleSubmit } = methods;
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -50,99 +47,75 @@ const Login = () => {
 
   return (
     <IonPage>
-      <IonContent>
-        <IonGrid className={`ion-padding ${styles.gridContainer}`}>
-          <IonRow>
-            <IonCol>
-              <IonText color='light'>
-                <h1 className='text-3xl font-bold'>Sistema de Asistencia</h1>
-              </IonText>
-              <IonText color='light'>
-                <p className='mt-2'>Inicia sesión para continuar</p>
-              </IonText>
-            </IonCol>
-          </IonRow>
+      <IonContent className='ion-padding' scrollY={false}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <IonGrid>
+            <IonRow className='ion-justify-content-center'>
+              <IonCol size='12' sizeMd='8' sizeLg='6' sizeXl='4'>
+                <IonCard color='primary' className='ion-padding'>
+                  <IonCardContent>
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                      <IonText>
+                        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', margin: '0 0 0.5rem 0' }}>
+                          ConfeJAS Lima Oeste
+                        </h1>
+                      </IonText>
+                      <IonText color='medium'>
+                        <p style={{ margin: 0 }}>Inicia sesión para continuar</p>
+                      </IonText>
+                    </div>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <IonRow className='ion-margin-bottom'>
-              <IonCol>
-                <IonItem className={errors.email ? 'ion-invalid' : ''}>
-                  <IonLabel position='stacked'>Correo electrónico</IonLabel>
-                  <Controller
-                    name='email'
-                    control={control}
-                    render={({ field }) => (
-                      <IonInput
-                        {...field}
-                        type='email'
-                        placeholder='Ingrese su correo electrónico'
-                        onIonInput={(e) => field.onChange(e.detail.value)}
-                      />
-                    )}
-                  />
-                </IonItem>
-                {errors.email && (
-                  <IonText color='danger'>
-                    <p>{errors.email.message}</p>
-                  </IonText>
-                )}
+                    <FormProvider {...methods}>
+                      <form onSubmit={handleSubmit(onSubmit)}>
+                        <div style={{ marginBottom: '1rem' }}>
+                          <InputValidated
+                            name='email'
+                            type='email'
+                            label='Correo electrónico'
+                            placeholder='Ingrese su correo electrónico'
+                            required
+                          />
+                        </div>
+
+                        <div style={{ marginBottom: '1.5rem' }}>
+                          <InputValidated
+                            name='password'
+                            type='password'
+                            label='Contraseña'
+                            placeholder='Ingrese su contraseña'
+                            required
+                          />
+                        </div>
+
+                        <IonButton expand='block' type='submit' disabled={isLoading} color='light'>
+                          {isLoading ? (
+                            <>
+                              <IonSpinner name='crescent' style={{ marginRight: '0.5rem' }} />
+                              Iniciando sesión...
+                            </>
+                          ) : (
+                            'Iniciar Sesión'
+                          )}
+                        </IonButton>
+                      </form>
+                    </FormProvider>
+
+                    <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+                      <IonText color='medium'>
+                        <p style={{ fontSize: '0.875rem', margin: 0 }}>
+                          ¿No tienes una cuenta?{' '}
+                          <a href='/auth/register' style={{ color: 'var(--ion-color-tertiary)' }}>
+                            Regístrate
+                          </a>
+                        </p>
+                      </IonText>
+                    </div>
+                  </IonCardContent>
+                </IonCard>
               </IonCol>
             </IonRow>
-
-            <IonRow className='ion-margin-bottom'>
-              <IonCol>
-                <IonItem className={errors.password ? 'ion-invalid' : ''}>
-                  <IonLabel position='stacked'>Contraseña</IonLabel>
-                  <Controller
-                    name='password'
-                    control={control}
-                    render={({ field }) => (
-                      <IonInput
-                        {...field}
-                        type='password'
-                        placeholder='Ingrese su contraseña'
-                        onIonInput={(e) => field.onChange(e.detail.value)}
-                      />
-                    )}
-                  />
-                </IonItem>
-                {errors.password && (
-                  <IonText color='danger'>
-                    <p>{errors.password.message}</p>
-                  </IonText>
-                )}
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonButton expand='block' type='submit' disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <IonSpinner name='crescent' className='mr-2' />
-                      Iniciando sesión...
-                    </>
-                  ) : (
-                    'Iniciar Sesión'
-                  )}
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </form>
-
-          {/* Additional Links */}
-          <IonRow>
-            <IonCol>
-              <IonText color='medium'>
-                <p className='text-sm'>
-                  ¿No tienes una cuenta?{' '}
-                  <a href='/auth/register' className='text-blue-500 hover:underline'>
-                    Regístrate
-                  </a>
-                </p>
-              </IonText>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
+          </IonGrid>
+        </div>
       </IonContent>
     </IonPage>
   );
