@@ -25,5 +25,7 @@ export interface CreateUserDto {
   healthInsurance?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
+  companyId?: string;
+  roomId?: string;
   roleIds: string[];
 }

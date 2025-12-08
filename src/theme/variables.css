@@ -115,6 +115,16 @@ ion-input {
   --highlight-color-invalid: var(--ion-color-danger);
 }
 
+/* Estilos para inputs inválidos */
+ion-input.ion-invalid.ion-touched {
+  --highlight-color: var(--ion-color-danger) !important;
+  --border-color: var(--ion-color-danger);
+}
+
+ion-input.ion-invalid.ion-touched::part(native) {
+  border-color: var(--ion-color-danger);
+}
+
 ion-item {
   --highlight-color-focused: var(--ion-color-primary-contrast);
   --highlight-color-valid: var(--ion-color-success);
@@ -128,15 +138,31 @@ ion-input[fill='outline'] {
   --highlight-color: var(--ion-color-primary-contrast) !important;
 }
 
+/* Sobrescribir el color de borde para inputs inválidos con fill='outline' */
+ion-input[fill='outline'].ion-invalid.ion-touched {
+  --highlight-color: var(--ion-color-danger) !important;
+}
+
 /* Sobrescribir el color de borde en focus para textarea con fill='outline' */
 ion-textarea[fill='outline'] {
   --highlight-color: var(--ion-color-primary-contrast) !important;
+}
+
+/* Sobrescribir el color de borde para textarea inválidos con fill='outline' */
+ion-textarea[fill='outline'].ion-invalid.ion-touched {
+  --highlight-color: var(--ion-color-danger) !important;
 }
 
 ion-textarea {
   --highlight-color-focused: var(--ion-color-primary-contrast);
   --highlight-color-valid: var(--ion-color-success);
   --highlight-color-invalid: var(--ion-color-danger);
+}
+
+/* Estilos para textarea inválidos */
+ion-textarea.ion-invalid.ion-touched {
+  --highlight-color: var(--ion-color-danger) !important;
+  --border-color: var(--ion-color-danger);
 }
 
 /* Estilos para IonSelect - hacer que el popover/alert tenga el color de las cards */

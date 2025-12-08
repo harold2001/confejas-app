@@ -254,7 +254,7 @@ const Users = () => {
           <IonButton onClick={() => handleSearchByName(inputValue)} color='light'>
             Buscar
           </IonButton>
-          <IonButton onClick={handleCreateClick} color='success'>
+          <IonButton type='button' color='success' routerLink={ROUTES.CREATE_USER}>
             Añadir +
           </IonButton>
         </IonCol>

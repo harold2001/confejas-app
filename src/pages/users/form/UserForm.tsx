@@ -17,16 +17,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { useIonRouter } from '@ionic/react';
 import { Controller, FormProvider, useForm, FieldErrors } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { getUserById } from '../../../api/users.api';
 import QUERY_KEYS from '../../../constants/query-keys';
-import {
-  createUserSchema,
-  updateUserSchema,
-  CreateUserFormData,
-  UpdateUserFormData,
-} from '../../../schemas/userSchema';
+import { UpdateUserDto } from '../../../interfaces/dto/update-user.dto';
 import { ROUTES } from '../../../constants/routes';
 import { getStakes } from '../../../api/stakes.api';
 import { getRoles } from '../../../api/roles.api';
@@ -79,8 +73,8 @@ const UserForm = () => {
     queryFn: getRoomsWithCount,
   });
 
-  const methods = useForm<CreateUserFormData | UpdateUserFormData>({
-    resolver: zodResolver(isEditMode ? updateUserSchema : createUserSchema),
+  const methods = useForm<CreateUserDto | UpdateUserDto>({
+    mode: 'onChange',
     defaultValues: {
       firstName: '',
       middleName: '',
@@ -155,12 +149,13 @@ const UserForm = () => {
     }
   }, [data, reset, isEditMode]);
 
-  const onSubmit = async (formData: CreateUserFormData | UpdateUserFormData) => {
+  const onSubmit = async (formData: CreateUserDto | UpdateUserDto) => {
     try {
       if (isEditMode) {
         // Update existing user
-        const updateData = {
-          ...(formData as UpdateUserFormData),
+        const updateData: UpdateUserDto = {
+          id: id!,
+          ...formData,
           birthDate: formData.birthDate || undefined,
         };
         await saveUser(updateData);
@@ -172,14 +167,16 @@ const UserForm = () => {
           return;
         }
 
-        const createData = {
-          ...(formData as CreateUserFormData),
+        const createData: CreateUserDto = {
+          ...formData,
+          firstName: formData.firstName!,
+          paternalLastName: formData.paternalLastName!,
           birthDate: formData.birthDate || undefined,
           password: 'password', // Default password
           roleIds: [participantRole.id], // Use Participant role ID
         };
 
-        await saveUser(createData as CreateUserDto);
+        await saveUser(createData);
         router.push(ROUTES.USERS, 'back', 'replace');
       }
     } catch {
@@ -187,8 +184,12 @@ const UserForm = () => {
     }
   };
 
-  const onErrors = (errors: FieldErrors<CreateUserFormData | UpdateUserFormData>) => {
-    toast.error(`Por favor, corrija los siguientes errores en el formulario: ${Object.keys(errors).join(', ')}.`);
+  const onErrors = (errors: FieldErrors<Partial<CreateUserDto & UpdateUserDto>>) => {
+    const errorFields = Object.keys(errors).map((key) => {
+      const error = errors[key as keyof typeof errors];
+      return error?.message || key;
+    });
+    toast.error(`Por favor, corrija los siguientes errores: ${errorFields.join(', ')}`);
   };
 
   if (isLoading) {
@@ -258,17 +259,6 @@ const UserForm = () => {
                       </IonCol>
 
                       <IonCol size='12' sizeMd='4'>
-                        <InputValidated
-                          name='dni'
-                          label='DNI'
-                          type='number'
-                          placeholder='12345678'
-                          required={false}
-                          maxLength={8}
-                        />
-                      </IonCol>
-
-                      <IonCol size='12' sizeMd='4'>
                         <SelectValidated
                           name='gender'
                           label='Género'
@@ -293,7 +283,7 @@ const UserForm = () => {
                         />
                       </IonCol>
 
-                      <IonCol size='12' sizeMd='6'>
+                      <IonCol size='12' sizeMd='3'>
                         <DateInputValidated name='birthDate' label='Fecha de Nacimiento' required={false} />
                       </IonCol>
 
