@@ -60,7 +60,7 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
   const isEditMode = mode === 'edit';
   const isPermutaMode = mode === 'permuta';
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
     queryFn: () => getUserById(userId!),
     enabled: isEditMode && !!userId,
@@ -81,9 +81,14 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
     queryFn: getCompaniesWithCount,
   });
 
-  const { data: rooms, isLoading: roomsLoading } = useQuery({
+  const {
+    data: rooms,
+    isLoading: roomsLoading,
+    refetch: refetchRooms,
+  } = useQuery({
     queryKey: [QUERY_KEYS.GET_ROOMS_WITH_COUNT],
     queryFn: getRoomsWithCount,
+    staleTime: 0,
   });
 
   const { data: usersData, isLoading: usersLoading } = useQuery({
@@ -185,6 +190,9 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
       onClose();
     } catch {
       // Error handling is done by useUser hook
+    } finally {
+      await refetch();
+      await refetchRooms();
     }
   };
 

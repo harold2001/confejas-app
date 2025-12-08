@@ -50,9 +50,14 @@ const UserForm = () => {
     queryFn: getCompaniesWithCount,
   });
 
-  const { data: rooms, isLoading: roomsLoading } = useQuery({
+  const {
+    data: rooms,
+    isLoading: roomsLoading,
+    refetch: refetchRooms,
+  } = useQuery({
     queryKey: [QUERY_KEYS.GET_ROOMS_WITH_COUNT],
     queryFn: getRoomsWithCount,
+    staleTime: 0,
   });
 
   const methods = useForm<CreateUserDto | UpdateUserDto>({
@@ -84,6 +89,7 @@ const UserForm = () => {
         };
         await saveUser(updateData);
         await refetch();
+        await refetchRooms();
       } else {
         // Create new user - find Participant role ID
         const participantRole = roles?.find((role) => role.name === ROLES.PARTICIPANT);
