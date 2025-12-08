@@ -23,6 +23,7 @@ import {
   medkitOutline,
   shirtOutline,
   businessOutline,
+  personOutline,
 } from 'ionicons/icons';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
@@ -36,6 +37,7 @@ import QUERY_KEYS from '../../constants/query-keys';
 import { UserStatisticsDto } from '../../interfaces/dto/statistics.dto';
 import { useSocket } from '../../hooks/useSocket';
 import toast from 'react-hot-toast';
+import { getPercentageFromTotal } from '../../utils/helpers';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
@@ -246,7 +248,12 @@ const Dashboard = () => {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div>
                         <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>Han Llegado</p>
-                        <h1 style={{ margin: '0.5rem 0', fontSize: '2.5rem' }}>{statistics?.usersArrived || 0}</h1>
+                        <h1 style={{ margin: '0.5rem 0', fontSize: '2.5rem' }}>
+                          {statistics?.usersArrived || 0}{' '}
+                          <span className={styles.percentageSpan}>
+                            / {getPercentageFromTotal(statistics?.usersArrived || 0, statistics?.totalUsers || 1)}%
+                          </span>
+                        </h1>
                       </div>
                       <IonIcon icon={checkmarkCircleOutline} style={{ fontSize: '3rem', opacity: 0.3 }} />
                     </div>
@@ -282,6 +289,16 @@ const Dashboard = () => {
                     </div>
                   </IonCardContent>
                 </IonCard>
+              </IonCol>
+            </IonRow>
+
+            {/* Statistics Header */}
+            <IonRow className={`ion-margin-top ${styles.sectionHeader}`}>
+              <IonCol>
+                <h3 className='ion-no-margin'>
+                  <IonIcon icon={personOutline} style={{ marginRight: '0.5rem' }} />
+                  Participantes
+                </h3>
               </IonCol>
             </IonRow>
 
@@ -391,15 +408,21 @@ const Dashboard = () => {
                   </IonCardContent>
                 </IonCard>
               </IonCol>
+            </IonRow>
 
-              <IonCol size='12' sizeMd='6'>
+            {/* Statistics Header */}
+            <IonRow className={`ion-margin-top ${styles.sectionHeader}`}>
+              <IonCol>
+                <h3 className='ion-no-margin'>
+                  <IonIcon icon={businessOutline} style={{ marginRight: '0.5rem' }} />
+                  Compañías
+                </h3>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol size='12'>
                 <IonCard color='primary'>
-                  <IonCardHeader>
-                    <IonCardTitle>
-                      <IonIcon icon={businessOutline} style={{ marginRight: '0.5rem' }} />
-                      Participantes por Compañía
-                    </IonCardTitle>
-                  </IonCardHeader>
                   <IonCardContent>
                     <IonRow>
                       {statistics?.companyStatistics.map((company) => (

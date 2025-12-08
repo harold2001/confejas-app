@@ -11,6 +11,7 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
+  IonCheckbox,
 } from '@ionic/react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -320,7 +321,6 @@ const Users = () => {
     const genderOptions = [
       { label: 'Masculino', value: 'Male' },
       { label: 'Femenino', value: 'Female' },
-      { label: 'Otro', value: 'Other' },
     ];
 
     const stakeOptions = stakesData?.map((stake) => ({ label: stake?.name, value: stake?.id }));
@@ -343,7 +343,7 @@ const Users = () => {
           <IonCardContent className='ion-padding'>
             <IonRow className='ion-margin-bottom ion-align-items-center ion-justify-content-center'>
               {/* First Name */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='12' sizeMd='3'>
+              <IonCol size='12' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Nombre</IonLabel>
                 <InputText
                   value={filtersDraft.firstName}
@@ -354,7 +354,7 @@ const Users = () => {
               </IonCol>
 
               {/* Paternal Last Name */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='12' sizeMd='3'>
+              <IonCol size='12' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Apellido Paterno</IonLabel>
                 <InputText
                   value={filtersDraft.paternalLastName}
@@ -365,7 +365,7 @@ const Users = () => {
               </IonCol>
 
               {/* Maternal Last Name */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Apellido Materno</IonLabel>
                 <InputText
                   value={filtersDraft.maternalLastName}
@@ -376,7 +376,7 @@ const Users = () => {
               </IonCol>
 
               {/* Department */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Habitación</IonLabel>
                 <InputText
                   value={filtersDraft.department}
@@ -387,7 +387,7 @@ const Users = () => {
               </IonCol>
 
               {/* Stake */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Estacas</IonLabel>
                 <MultiSelect
                   value={filtersDraft.stakeIds}
@@ -401,7 +401,7 @@ const Users = () => {
               </IonCol>
 
               {/* Ward */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Barrio</IonLabel>
                 <InputText
                   value={filtersDraft.ward}
@@ -412,7 +412,7 @@ const Users = () => {
               </IonCol>
 
               {/* Gender */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Género</IonLabel>
                 <Dropdown
                   value={filtersDraft.gender}
@@ -425,7 +425,7 @@ const Users = () => {
               </IonCol>
 
               {/* Shirt Size */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Talla de Polo</IonLabel>
                 <Dropdown
                   value={filtersDraft.shirtSize}
@@ -438,7 +438,7 @@ const Users = () => {
               </IonCol>
 
               {/* Age */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Edad</IonLabel>
                 <InputText
                   type='number'
@@ -450,7 +450,7 @@ const Users = () => {
               </IonCol>
 
               {/* Medical Condition */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Condición Médica</IonLabel>
                 <InputText
                   value={filtersDraft.medicalCondition}
@@ -461,7 +461,7 @@ const Users = () => {
               </IonCol>
 
               {/* Medical Treatment */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Tratamiento Médico</IonLabel>
                 <InputText
                   value={filtersDraft.medicalTreatment}
@@ -472,7 +472,7 @@ const Users = () => {
               </IonCol>
 
               {/* Blood Type */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Tipo de Sangre</IonLabel>
                 <InputText
                   value={filtersDraft.bloodType}
@@ -483,13 +483,31 @@ const Users = () => {
               </IonCol>
 
               {/* Has Arrived Toggle */}
-              <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
+              <IonCol size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Ha Llegado</IonLabel>
-                <IonToggle
-                  checked={filtersDraft.hasArrived === true}
-                  onIonChange={(e) => handleFilterChange('hasArrived', e.detail.checked ? true : null)}
-                  color='success'
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  <IonCheckbox
+                    checked={filtersDraft.hasArrived === null}
+                    onIonChange={() => handleFilterChange('hasArrived', null)}
+                    labelPlacement='end'
+                  >
+                    Todos
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.hasArrived === true}
+                    onIonChange={() => handleFilterChange('hasArrived', true)}
+                    labelPlacement='end'
+                  >
+                    Sí
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.hasArrived === false}
+                    onIonChange={() => handleFilterChange('hasArrived', false)}
+                    labelPlacement='end'
+                  >
+                    No
+                  </IonCheckbox>
+                </div>
               </IonCol>
 
               {/* Is Member of the Church Toggle */}
