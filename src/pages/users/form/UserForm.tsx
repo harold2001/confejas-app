@@ -16,7 +16,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { useIonRouter } from '@ionic/react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { getUserById } from '../../../api/users.api';
@@ -187,8 +187,8 @@ const UserForm = () => {
     }
   };
 
-  const onErrors = () => {
-    toast.error('Por favor, corrija los errores en el formulario antes de continuar.');
+  const onErrors = (errors: FieldErrors<CreateUserFormData | UpdateUserFormData>) => {
+    toast.error(`Por favor, corrija los siguientes errores en el formulario: ${Object.keys(errors).join(', ')}.`);
   };
 
   if (isLoading) {
@@ -258,7 +258,14 @@ const UserForm = () => {
                       </IonCol>
 
                       <IonCol size='12' sizeMd='4'>
-                        <InputValidated name='dni' label='DNI' placeholder='12345678' required={false} maxLength={8} />
+                        <InputValidated
+                          name='dni'
+                          label='DNI'
+                          type='number'
+                          placeholder='12345678'
+                          required={false}
+                          maxLength={8}
+                        />
                       </IonCol>
 
                       <IonCol size='12' sizeMd='4'>
