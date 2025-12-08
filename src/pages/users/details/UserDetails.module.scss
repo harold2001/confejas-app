@@ -40,6 +40,27 @@
     }
   }
 
+  .replacedByInfo {
+    text-align: right;
+    padding: 0.5rem 0;
+
+    @media (max-width: 767px) {
+      text-align: left;
+    }
+
+    ion-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--ion-color-warning);
+    }
+
+    p {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--ion-color-light);
+    }
+  }
+
   .infoRow {
     padding: 0.75rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);

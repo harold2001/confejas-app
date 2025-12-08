@@ -38,4 +38,5 @@ export interface IUser extends BaseInterface {
   qrSent?: boolean;
   roles: IRole[];
   userRooms: IUserRoom[];
+  replacedBy: IUser | null;
 }

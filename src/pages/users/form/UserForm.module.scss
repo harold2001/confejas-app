@@ -20,3 +20,11 @@
     color: var(--ion-color-danger) !important;
   }
 }
+
+:global(.room-available) {
+  color: var(--ion-color-success) !important;
+
+  .alert-radio-label {
+    color: var(--ion-color-success) !important;
+  }
+}

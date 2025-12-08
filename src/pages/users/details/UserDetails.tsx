@@ -16,6 +16,7 @@ import {
 } from '@ionic/react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useHistory } from 'react-router-dom';
+import { useState } from 'react';
 import { arrowBackOutline, swapHorizontalOutline } from 'ionicons/icons';
 import { getUserById } from '../../../api/users.api';
 import QUERY_KEYS from '../../../constants/query-keys';
@@ -23,7 +24,9 @@ import Header from '../../../components/Header/Header';
 import usePlatform from '../../../hooks/usePlatform';
 import { ROUTES } from '../../../constants/routes';
 import { useUser } from '../../../hooks/useUser';
+import UserFormModal from '../../../components/UserFormModal/UserFormModal';
 import styles from './UserDetails.module.scss';
+import { transformDBDateToDDMMYYYY } from '../../../utils/helpers';
 
 const UserDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,6 +34,9 @@ const UserDetails = () => {
   const { isMobile } = usePlatform();
   const isMobileView = isMobile();
   const { markAsArrived } = useUser();
+
+  // Modal state for permuta
+  const [isPermutaModalOpen, setIsPermutaModalOpen] = useState(false);
 
   const {
     data: user,
@@ -66,6 +72,18 @@ const UserDetails = () => {
       </IonCol>
     </IonRow>
   );
+
+  const handlePermutaClick = () => {
+    setIsPermutaModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsPermutaModalOpen(false);
+  };
+
+  const handleModalSuccess = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return (
@@ -104,6 +122,13 @@ const UserDetails = () => {
     <IonPage>
       {isMobileView && <Header title='Detalles del Participante' />}
       <IonContent className='ion-padding'>
+        <UserFormModal
+          isOpen={isPermutaModalOpen}
+          onClose={handleModalClose}
+          mode='permuta'
+          originalUser={user}
+          onSuccess={handleModalSuccess}
+        />
         <div className={styles.detailsContainer}>
           <IonButton fill='clear' onClick={() => history.push(ROUTES.USERS)} className={styles.backButton}>
             <IonIcon slot='start' icon={arrowBackOutline} />
@@ -143,10 +168,28 @@ const UserDetails = () => {
                   </div>
                 </IonCol>
                 <IonCol size='12' sizeMd='6' className='ion-text-end'>
-                  <IonButton color='warning'>
-                    <IonIcon slot='start' icon={swapHorizontalOutline} />
-                    Realizar Permuta
-                  </IonButton>
+                  {user?.replacedBy ? (
+                    <div className={styles.replacedByInfo}>
+                      <IonLabel>
+                        <strong>Participante al que le cedió el cupo:</strong>
+                      </IonLabel>
+                      <p>
+                        {[
+                          user?.replacedBy?.firstName,
+                          user?.replacedBy?.middleName,
+                          user?.replacedBy?.paternalLastName,
+                          user?.replacedBy?.maternalLastName,
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                      </p>
+                    </div>
+                  ) : (
+                    <IonButton color='warning' onClick={handlePermutaClick}>
+                      <IonIcon slot='start' icon={swapHorizontalOutline} />
+                      Realizar Permuta
+                    </IonButton>
+                  )}
                 </IonCol>
               </IonRow>
             </IonCardContent>
@@ -163,9 +206,25 @@ const UserDetails = () => {
               <InfoRow label='Segundo Nombre' value={user?.middleName} />
               <InfoRow label='Apellido Paterno' value={user?.paternalLastName} />
               <InfoRow label='Apellido Materno' value={user?.maternalLastName} />
-              <InfoRow label='Fecha de Nacimiento' value={user?.birthDate ? user?.birthDate : 'N/A'} />
+              <InfoRow
+                label='Fecha de Nacimiento'
+                value={user?.birthDate ? transformDBDateToDDMMYYYY(user.birthDate) : 'N/A'}
+              />
               <InfoRow label='Edad' value={user?.age} />
-              <InfoRow label='Género' value={user?.gender} />
+              <InfoRow label='Género' value='Male' />
+            </IonCardContent>
+          </IonCard>
+
+          {/* Información de Alojamiento */}
+          <IonCard color='primary'>
+            <IonCardHeader>
+              <IonCardTitle>Información de Alojamiento</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <InfoRow label='Compañía' value={user?.company?.name} />
+              <InfoRow label='Habitación' value={user?.userRooms?.[0]?.room?.roomNumber} />
+              <InfoRow label='Código de Llave' value={user?.keyCode} />
+              <BooleanRow label='Ha Llegado' value={user?.hasArrived} />
             </IonCardContent>
           </IonCard>
 
@@ -215,42 +274,6 @@ const UserDetails = () => {
             <IonCardContent>
               <InfoRow label='Nombre del Contacto' value={user?.emergencyContactName} />
               <InfoRow label='Teléfono del Contacto' value={user?.emergencyContactPhone} />
-            </IonCardContent>
-          </IonCard>
-
-          {/* Información de Alojamiento */}
-          <IonCard color='primary'>
-            <IonCardHeader>
-              <IonCardTitle>Información de Alojamiento</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <InfoRow label='Compañía' value={user?.company?.name} />
-              <InfoRow label='Habitación' value={user?.userRooms?.[0]?.room?.roomNumber} />
-              <InfoRow label='Código de Llave' value={user?.keyCode} />
-              <BooleanRow label='Ha Llegado' value={user?.hasArrived} />
-            </IonCardContent>
-          </IonCard>
-
-          <IonCard color='primary'>
-            <IonCardHeader>
-              <IonCardTitle>Historial de Habitaciones</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              {user?.userRooms && user?.userRooms.length > 0 ? (
-                <>
-                  {user.userRooms.map((userRoom, index) => (
-                    <div key={userRoom.id} className={styles.roomSection}>
-                      <h4>Habitación {index + 1}</h4>
-                      <InfoRow label='Número de Habitación' value={userRoom.room?.roomNumber} />
-                      <InfoRow label='Edificio' value={userRoom.room?.floor?.building?.name} />
-                      <InfoRow label='Piso' value={userRoom.room?.floor?.number} />
-                      <InfoRow label='Tipo de Habitación' value={userRoom.room?.roomType?.name} />
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <InfoRow label='Habitación' value='No asignada' />
-              )}
             </IonCardContent>
           </IonCard>
 

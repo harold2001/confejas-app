@@ -6,6 +6,7 @@ import styles from './Input.module.scss';
 export interface Option<V> {
   label: string;
   value: V;
+  cssClass?: string;
 }
 
 interface Props<T extends FieldValues, Name extends FieldPath<T>> {
@@ -100,6 +101,7 @@ const SelectComponent = <T extends FieldValues, Name extends FieldPath<T>>(
                 <IonSelectOption
                   key={String(typeof opt === 'string' ? opt : opt?.value)}
                   value={typeof opt === 'string' ? opt : opt?.value}
+                  className={typeof opt === 'string' ? undefined : opt?.cssClass}
                 >
                   {typeof opt === 'string' ? opt : opt.label ?? opt}
                 </IonSelectOption>
