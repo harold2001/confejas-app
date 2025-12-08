@@ -47,7 +47,7 @@ const Rooms = () => {
     isLoading,
     error,
     refetch,
-  } = useQuery<IBuildingDetail[]>({
+  } = useQuery({
     queryKey: [QUERY_KEYS.GET_ROOMS_WITH_DETAILS],
     queryFn: getRoomsWithDetails,
   });
@@ -113,9 +113,12 @@ const Rooms = () => {
       <IonPage>
         {isMobileView && <Header title='Habitaciones' />}
         <IonContent>
-          <div className='flex items-center justify-center h-full'>
-            <IonSpinner name='crescent' />
-          </div>
+          <IonCard>
+            <IonCardContent className='ion-text-center ion-padding'>
+              <IonSpinner name='crescent' />
+              <p>Cargando habitaciones...</p>
+            </IonCardContent>
+          </IonCard>
         </IonContent>
       </IonPage>
     );

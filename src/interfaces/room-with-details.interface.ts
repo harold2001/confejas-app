@@ -3,6 +3,7 @@ export interface IRoomOccupant {
   firstName: string;
   lastName: string;
   email: string;
+  hasArrived: string;
 }
 
 export interface IRoomDetail {
