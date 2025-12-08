@@ -13,18 +13,23 @@ import {
   IonButtons,
   IonIcon,
   IonAlert,
+  IonText,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonSearchbar,
 } from '@ionic/react';
 import { useQuery } from '@tanstack/react-query';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { getUserById } from '../../api/users.api';
+import { getUserById, getUsersPaginated } from '../../api/users.api';
 import QUERY_KEYS from '../../constants/query-keys';
 import { getStakes } from '../../api/stakes.api';
 import { getRoles } from '../../api/roles.api';
 import { getCompaniesWithCount } from '../../api/companies.api';
 import { getRoomsWithCount } from '../../api/rooms.api';
 import { ROLES } from '../../constants/roles';
-import { closeOutline } from 'ionicons/icons';
+import { closeOutline, personOutline } from 'ionicons/icons';
 import { useUser } from '../../hooks/useUser';
 import usePlatform from '../../hooks/usePlatform';
 import { CreateUserDto } from '../../interfaces/dto/create-user.dto';
@@ -32,6 +37,7 @@ import { UpdateUserDto } from '../../interfaces/dto/update-user.dto';
 import toast from 'react-hot-toast';
 import { IUser } from '../../interfaces/user.interface';
 import UserFormFields from '../UserFormFields/UserFormFields';
+import { initialValues, getDefaultValues } from '../../pages/users/form/form.helper';
 
 interface UserFormModalProps {
   isOpen: boolean;
@@ -46,7 +52,10 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
   const { saveUser, permutaUser } = useUser();
   const { isDesktop } = usePlatform();
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
-  const [formDataToSubmit, setFormDataToSubmit] = useState<Partial<CreateUserDto & UpdateUserDto> | null>(null);
+  const [formDataToSubmit, setFormDataToSubmit] = useState<CreateUserDto | UpdateUserDto | null>(null);
+  const [optionSelected, setOptionSelected] = useState<'existing' | 'new' | null>(null);
+  const [permutaUserId, setPermutaUserId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const isEditMode = mode === 'edit';
   const isPermutaMode = mode === 'permuta';
@@ -77,35 +86,19 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
     queryFn: getRoomsWithCount,
   });
 
-  const methods = useForm<Partial<CreateUserDto & UpdateUserDto>>({
-    mode: 'onSubmit',
-    defaultValues: {
-      firstName: '',
-      middleName: '',
-      paternalLastName: '',
-      maternalLastName: '',
-      dni: '',
-      birthDate: undefined,
-      gender: undefined,
-      phone: '',
-      email: '',
-      address: '',
-      department: '',
-      hasArrived: false,
-      medicalCondition: '',
-      medicalTreatment: '',
-      keyCode: '',
-      ward: '',
-      stakeId: '',
-      age: '',
-      isMemberOfTheChurch: true,
-      notes: '',
-      shirtSize: '',
-      bloodType: '',
-      healthInsurance: '',
-      emergencyContactName: '',
-      emergencyContactPhone: '',
-    },
+  const { data: usersData, isLoading: usersLoading } = useQuery({
+    queryKey: [QUERY_KEYS.GET_USERS, { searchName: searchTerm }],
+    queryFn: () =>
+      getUsersPaginated({
+        pagination: { page: 1, limit: 100 },
+        filters: { searchName: searchTerm || undefined },
+      }),
+    enabled: isPermutaMode && optionSelected === 'existing',
+  });
+
+  const methods = useForm<CreateUserDto | UpdateUserDto>({
+    mode: 'onChange',
+    defaultValues: initialValues,
   });
 
   const {
@@ -118,98 +111,20 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
   useEffect(() => {
     if (isOpen) {
       if (isEditMode && data) {
-        // Edit mode: load existing user data
-        reset({
-          id: data.id,
-          firstName: data.firstName || '',
-          middleName: data.middleName || '',
-          paternalLastName: data.paternalLastName || '',
-          maternalLastName: data.maternalLastName || '',
-          dni: data.dni || '',
-          birthDate: data.birthDate || undefined,
-          gender: data.gender === 'Varón' || data.gender === 'Mujer' ? data.gender : undefined,
-          phone: data.phone || '',
-          email: data.email || '',
-          address: data.address || '',
-          department: data.department || '',
-          hasArrived: data.hasArrived ?? false,
-          medicalCondition: data.medicalCondition || '',
-          medicalTreatment: data.medicalTreatment || '',
-          keyCode: data.keyCode || '',
-          ward: data.ward || '',
-          stakeId: data.stake?.id || '',
-          age: data.age || '',
-          isMemberOfTheChurch: data.isMemberOfTheChurch ?? true,
-          notes: data.notes || '',
-          shirtSize: data.shirtSize || '',
-          bloodType: data.bloodType || '',
-          healthInsurance: data.healthInsurance || '',
-          emergencyContactName: data.emergencyContactName || '',
-          emergencyContactPhone: data.emergencyContactPhone || '',
-        });
+        reset(getDefaultValues(data));
       } else if (isPermutaMode && originalUser) {
-        // Permuta mode: pre-fill with original user data (stakeId, ward, department, shirtSize)
         reset({
-          firstName: '',
-          middleName: '',
-          paternalLastName: '',
-          maternalLastName: '',
-          dni: '',
-          birthDate: undefined,
-          gender: undefined,
-          phone: '',
-          email: '',
-          address: '',
-          department: originalUser.department || '',
-          hasArrived: false,
-          medicalCondition: '',
-          medicalTreatment: '',
-          keyCode: '',
-          ward: originalUser.ward || '',
-          stakeId: originalUser.stake?.id || '',
-          age: '',
-          isMemberOfTheChurch: true,
-          notes: '',
-          shirtSize: originalUser.shirtSize || '',
-          bloodType: '',
-          healthInsurance: '',
-          emergencyContactName: '',
-          emergencyContactPhone: '',
+          ...initialValues,
+          companyId: originalUser?.company?.id || '',
+          roomId: originalUser?.userRooms?.[0]?.room?.id || '',
         });
       } else {
-        // Create mode: empty form
-        reset({
-          firstName: '',
-          middleName: '',
-          paternalLastName: '',
-          maternalLastName: '',
-          dni: '',
-          birthDate: undefined,
-          gender: undefined,
-          phone: '',
-          email: '',
-          address: '',
-          department: '',
-          hasArrived: false,
-          medicalCondition: '',
-          medicalTreatment: '',
-          keyCode: '',
-          ward: '',
-          stakeId: '',
-          age: '',
-          isMemberOfTheChurch: true,
-          notes: '',
-          shirtSize: '',
-          bloodType: '',
-          healthInsurance: '',
-          emergencyContactName: '',
-          emergencyContactPhone: '',
-        });
+        reset(initialValues);
       }
     }
   }, [isOpen, data, originalUser, reset, isEditMode, isPermutaMode]);
 
-  const onSubmit = async (formData: Partial<CreateUserDto & UpdateUserDto>) => {
+  const onSubmit = async (formData: CreateUserDto | UpdateUserDto) => {
     if (isPermutaMode) {
       // Show confirmation alert for permuta
       setFormDataToSubmit(formData);
@@ -219,83 +134,37 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
     }
   };
 
-  const executeSubmit = async (formData: Partial<CreateUserDto & UpdateUserDto>) => {
+  const executeSubmit = async (formData?: CreateUserDto | UpdateUserDto) => {
     try {
-      if (isEditMode) {
-        // Update existing user
-        const updateData: UpdateUserDto = {
-          id: formData.id!,
-          firstName: formData.firstName!,
-          paternalLastName: formData.paternalLastName!,
-          middleName: formData.middleName,
-          maternalLastName: formData.maternalLastName,
-          dni: formData.dni,
-          birthDate: formData.birthDate || undefined,
-          gender: formData.gender,
-          phone: formData.phone,
-          email: formData.email,
-          address: formData.address,
-          department: formData.department,
-          hasArrived: formData.hasArrived,
-          medicalCondition: formData.medicalCondition,
-          medicalTreatment: formData.medicalTreatment,
-          keyCode: formData.keyCode,
-          ward: formData.ward,
-          stakeId: formData.stakeId,
-          companyId: formData.companyId,
-          roomId: formData.roomId,
-          age: formData.age,
-          isMemberOfTheChurch: formData.isMemberOfTheChurch,
-          notes: formData.notes,
-          shirtSize: formData.shirtSize,
-          bloodType: formData.bloodType,
-          healthInsurance: formData.healthInsurance,
-          emergencyContactName: formData.emergencyContactName,
-          emergencyContactPhone: formData.emergencyContactPhone,
-        };
-        await saveUser(updateData);
+      if (isEditMode && formData) {
+        await saveUser(formData);
       } else if (isPermutaMode && originalUser) {
-        // Permuta operation
-        const participantRole = roles?.find((role) => role.name === ROLES.PARTICIPANT);
-        if (!participantRole) {
-          toast.error('No se encontró el rol de participante');
-          return;
+        // Permuta con usuario existente
+        if (optionSelected === 'existing' && permutaUserId) {
+          const permutaData = {
+            permutaUserId,
+            originalUserId: originalUser.id,
+            isExisting: true,
+          };
+          await permutaUser(permutaData);
         }
+        // Permuta con nuevo usuario
+        else if (optionSelected === 'new' && formData) {
+          const participantRole = roles?.find((role) => role.name === ROLES.PARTICIPANT);
 
-        const permutaData = {
-          firstName: formData.firstName!,
-          paternalLastName: formData.paternalLastName!,
-          middleName: formData.middleName,
-          maternalLastName: formData.maternalLastName,
-          dni: formData.dni,
-          birthDate: formData.birthDate || undefined,
-          gender: formData.gender,
-          phone: formData.phone,
-          email: formData.email,
-          address: formData.address,
-          department: formData.department,
-          hasArrived: formData.hasArrived,
-          medicalCondition: formData.medicalCondition,
-          medicalTreatment: formData.medicalTreatment,
-          keyCode: formData.keyCode,
-          ward: formData.ward,
-          stakeId: formData.stakeId,
-          companyId: formData.companyId,
-          roomId: formData.roomId,
-          age: formData.age,
-          isMemberOfTheChurch: formData.isMemberOfTheChurch,
-          notes: formData.notes,
-          shirtSize: formData.shirtSize,
-          bloodType: formData.bloodType,
-          healthInsurance: formData.healthInsurance,
-          emergencyContactName: formData.emergencyContactName,
-          emergencyContactPhone: formData.emergencyContactPhone,
-          password: 'password',
-          roleIds: [participantRole.id],
-          originalUserId: originalUser.id,
-        };
+          if (!participantRole) {
+            toast.error('No se encontró el rol de participante');
+            return;
+          }
 
-        await permutaUser(permutaData);
+          const permutaData = {
+            ...(formData as CreateUserDto),
+            roleIds: [participantRole.id],
+            originalUserId: originalUser.id,
+          };
+
+          await permutaUser(permutaData);
+        }
       } else {
         // Create new user
         const participantRole = roles?.find((role) => role.name === ROLES.PARTICIPANT);
@@ -305,34 +174,7 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
         }
 
         const createData: CreateUserDto = {
-          firstName: formData.firstName!,
-          paternalLastName: formData.paternalLastName!,
-          middleName: formData.middleName,
-          maternalLastName: formData.maternalLastName,
-          dni: formData.dni,
-          birthDate: formData.birthDate || undefined,
-          gender: formData.gender,
-          phone: formData.phone,
-          email: formData.email,
-          address: formData.address,
-          department: formData.department,
-          hasArrived: formData.hasArrived,
-          medicalCondition: formData.medicalCondition,
-          medicalTreatment: formData.medicalTreatment,
-          keyCode: formData.keyCode,
-          ward: formData.ward,
-          stakeId: formData.stakeId,
-          companyId: formData.companyId,
-          roomId: formData.roomId,
-          age: formData.age,
-          isMemberOfTheChurch: formData.isMemberOfTheChurch,
-          notes: formData.notes,
-          shirtSize: formData.shirtSize,
-          bloodType: formData.bloodType,
-          healthInsurance: formData.healthInsurance,
-          emergencyContactName: formData.emergencyContactName,
-          emergencyContactPhone: formData.emergencyContactPhone,
-          password: 'password',
+          ...(formData as CreateUserDto),
           roleIds: [participantRole.id],
         };
 
@@ -353,6 +195,10 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
   const handleClose = () => {
     reset();
     onClose();
+    setOptionSelected(null);
+    setFormDataToSubmit(null);
+    setPermutaUserId(null);
+    setSearchTerm('');
   };
 
   const getModalTitle = () => {
@@ -371,6 +217,18 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
     const paternalLastName = methods.watch('paternalLastName');
     if (!firstName || !paternalLastName) return '[Nuevo Usuario]';
     return `${firstName} ${paternalLastName}`;
+  };
+
+  const handleSelectExistingUser = (user: IUser) => {
+    setPermutaUserId(user.id);
+    setShowConfirmAlert(true);
+  };
+
+  const getSelectedUserName = () => {
+    if (!permutaUserId || !usersData) return '[Usuario Seleccionado]';
+    const selectedUser = usersData.data.find((u: IUser) => u.id === permutaUserId);
+    if (!selectedUser) return '[Usuario Seleccionado]';
+    return `${selectedUser.firstName} ${selectedUser.paternalLastName}`;
   };
 
   return (
@@ -396,24 +254,88 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
           </IonToolbar>
         </IonHeader>
         <IonContent className='ion-padding'>
-          {isLoading ? (
+          {!!isLoading && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <IonSpinner name='crescent' />
             </div>
-          ) : (
-            <IonRow>
-              <IonCol size='12'>
-                {isPermutaMode && originalUser && (
-                  <IonCard color='warning' className='ion-margin-bottom'>
-                    <IonCardContent>
-                      <p style={{ margin: 0, fontWeight: 'bold' }}>Usuario Original: {getOriginalUserName()}</p>
-                      <p style={{ margin: 0, fontSize: '0.9rem' }}>
-                        Este usuario cederá su cupo al nuevo usuario que estás creando.
-                      </p>
-                    </IonCardContent>
-                  </IonCard>
-                )}
+          )}
 
+          <IonRow>
+            <IonCol size='12'>
+              {isPermutaMode && originalUser && (
+                <IonCard color='warning' className='ion-margin-bottom'>
+                  <IonCardContent>
+                    <p style={{ margin: 0, fontWeight: 'bold' }}>Usuario Original: {getOriginalUserName()}</p>
+                    <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                      Este usuario cederá su cupo al nuevo usuario que estás creando.
+                    </p>
+                  </IonCardContent>
+                </IonCard>
+              )}
+
+              {isPermutaMode && optionSelected === null && (
+                <IonCard className='ion-margin-bottom'>
+                  <IonCardContent>
+                    <IonText color='light'>
+                      <h2>Selecciona una opción para la permuta</h2>
+                    </IonText>
+                    <IonRow>
+                      <IonCol size='12' sizeMd='6' className='ion-text-center ion-padding'>
+                        <IonButton expand='block' color='light' onClick={() => setOptionSelected('existing')}>
+                          Usuario Existente
+                        </IonButton>
+                      </IonCol>
+                      <IonCol size='12' sizeMd='6' className='ion-text-center ion-padding'>
+                        <IonButton expand='block' color='light' onClick={() => setOptionSelected('new')}>
+                          Nuevo Usuario
+                        </IonButton>
+                      </IonCol>
+                    </IonRow>
+                  </IonCardContent>
+                </IonCard>
+              )}
+
+              {isPermutaMode && optionSelected === 'existing' && (
+                <IonCard className='ion-margin-bottom'>
+                  <IonCardContent>
+                    <IonText color='light'>
+                      <h2>Selecciona el Usuario Existente</h2>
+                    </IonText>
+                    <p>Busca y selecciona el usuario que recibirá el cupo del usuario original.</p>
+
+                    <IonSearchbar
+                      value={searchTerm}
+                      onIonInput={(e) => setSearchTerm(e.detail.value!)}
+                      placeholder='Buscar por nombre'
+                      debounce={500}
+                    />
+
+                    {usersLoading ? (
+                      <div style={{ textAlign: 'center', padding: '2rem' }}>
+                        <IonSpinner name='crescent' />
+                      </div>
+                    ) : (
+                      <IonList>
+                        {usersData?.data
+                          ?.filter((user: IUser) => user.id !== originalUser?.id)
+                          .map((user: IUser) => (
+                            <IonItem key={user.id} button onClick={() => handleSelectExistingUser(user)}>
+                              <IonIcon icon={personOutline} slot='start' />
+                              <IonLabel>
+                                <h2>
+                                  {user.firstName} {user.paternalLastName}
+                                </h2>
+                                <p>{user.email || 'Sin email'}</p>
+                              </IonLabel>
+                            </IonItem>
+                          ))}
+                      </IonList>
+                    )}
+                  </IonCardContent>
+                </IonCard>
+              )}
+
+              {!!(!isPermutaMode || optionSelected === 'new') && (
                 <FormProvider {...methods}>
                   <form onSubmit={handleSubmit(onSubmit, onErrors)}>
                     <UserFormFields
@@ -434,9 +356,9 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
                     />
                   </form>
                 </FormProvider>
-              </IonCol>
-            </IonRow>
-          )}
+              )}
+            </IonCol>
+          </IonRow>
         </IonContent>
       </IonModal>
 
@@ -444,7 +366,9 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
         isOpen={showConfirmAlert}
         onDidDismiss={() => setShowConfirmAlert(false)}
         header='Confirmar Permuta'
-        message={`¿Seguro que deseas hacer la permuta de ${getOriginalUserName()} por ${getNewUserName()}?`}
+        message={`¿Seguro que deseas hacer la permuta de ${getOriginalUserName()} por ${
+          optionSelected === 'existing' ? getSelectedUserName() : getNewUserName()
+        }?`}
         buttons={[
           {
             text: 'Cancelar',
@@ -455,7 +379,9 @@ const UserFormModal = ({ isOpen, onClose, mode, userId, originalUser, onSuccess 
             text: 'Confirmar',
             cssClass: 'alert-button-confirm',
             handler: () => {
-              if (formDataToSubmit) {
+              if (optionSelected === 'existing') {
+                executeSubmit();
+              } else if (formDataToSubmit) {
                 executeSubmit(formDataToSubmit);
               }
             },

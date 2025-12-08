@@ -215,16 +215,18 @@ const Users = () => {
         >
           <IonIcon slot='icon-only' icon={createOutline} />
         </IonButton>
-        <IonButton
-          size='default'
-          fill='clear'
-          color='warning'
-          title='Realizar Permuta'
-          type='button'
-          onClick={() => handlePermutaClick(rowData)}
-        >
-          <IonIcon slot='icon-only' icon={swapHorizontalOutline} />
-        </IonButton>
+        {!rowData?.replacedBy && (
+          <IonButton
+            size='default'
+            fill='clear'
+            color='warning'
+            title='Realizar Permuta'
+            type='button'
+            onClick={() => handlePermutaClick(rowData)}
+          >
+            <IonIcon slot='icon-only' icon={swapHorizontalOutline} />
+          </IonButton>
+        )}
       </div>
     );
   };

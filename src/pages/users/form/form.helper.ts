@@ -1,0 +1,73 @@
+import { CreateUserDto } from '../../../interfaces/dto/create-user.dto';
+import { UpdateUserDto } from '../../../interfaces/dto/update-user.dto';
+import { IUser } from '../../../interfaces/user.interface';
+
+export const initialValues: CreateUserDto | UpdateUserDto = {
+  id: '',
+  firstName: '',
+  middleName: '',
+  paternalLastName: '',
+  maternalLastName: '',
+  dni: '',
+  birthDate: '',
+  gender: '',
+  phone: '',
+  email: '',
+  password: 'password',
+  address: '',
+  department: '',
+  hasArrived: false,
+  medicalCondition: '',
+  medicalTreatment: '',
+  keyCode: '',
+  ward: '',
+  stakeId: '',
+  age: '',
+  isMemberOfTheChurch: true,
+  notes: '',
+  shirtSize: '',
+  bloodType: '',
+  healthInsurance: '',
+  emergencyContactName: '',
+  emergencyContactPhone: '',
+  companyId: '',
+  roomId: '',
+  roleIds: [],
+};
+
+export const getDefaultValues = (user: IUser | undefined): CreateUserDto | UpdateUserDto => {
+  return {
+    id: user?.id,
+    firstName: user?.firstName,
+    middleName: user?.middleName,
+    paternalLastName: user?.paternalLastName,
+    maternalLastName: user?.maternalLastName,
+    dni: user?.dni,
+    birthDate: user?.birthDate,
+    gender: user?.gender,
+    phone: user?.phone,
+    email: user?.email,
+    password: user?.password,
+    address: user?.address,
+    department: user?.department,
+    hasArrived: user?.hasArrived,
+    medicalCondition: user?.medicalCondition,
+    medicalTreatment: user?.medicalTreatment,
+    keyCode: user?.keyCode,
+    ward: user?.ward,
+    stakeId: user?.stake?.id,
+    age: user?.age,
+    isMemberOfTheChurch: user?.isMemberOfTheChurch,
+    notes: user?.notes,
+    shirtSize: user?.shirtSize,
+    bloodType: user?.bloodType,
+    healthInsurance: user?.healthInsurance,
+    emergencyContactName: user?.emergencyContactName,
+    emergencyContactPhone: user?.emergencyContactPhone,
+    companyId: user?.company?.id,
+    roomId: user?.userRooms?.[0].room?.id,
+    roleIds: user?.roles ? user?.roles.map((role) => role.id) : [],
+  };
+};
+
+export default getDefaultValues;

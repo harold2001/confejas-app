@@ -68,9 +68,9 @@ export const useUser = () => {
 
   const saveUser = async (user: CreateUserDto | UpdateUserDto) => {
     if ('id' in user) {
-      return updateUserMutation.mutateAsync(user);
+      return updateUserMutation.mutateAsync(user as UpdateUserDto);
     } else {
-      return createUserMutation.mutateAsync(user);
+      return createUserMutation.mutateAsync(user as CreateUserDto);
     }
   };
 

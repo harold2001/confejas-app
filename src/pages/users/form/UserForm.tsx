@@ -20,6 +20,7 @@ import styles from './UserForm.module.scss';
 import { CreateUserDto } from '../../../interfaces/dto/create-user.dto';
 import toast from 'react-hot-toast';
 import UserFormFields from '../../../components/UserFormFields/UserFormFields';
+import { initialValues, getDefaultValues } from './form.helper';
 
 const UserForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,35 +57,7 @@ const UserForm = () => {
 
   const methods = useForm<CreateUserDto | UpdateUserDto>({
     mode: 'onChange',
-    defaultValues: {
-      firstName: '',
-      middleName: '',
-      paternalLastName: '',
-      maternalLastName: '',
-      dni: '',
-      birthDate: undefined,
-      gender: undefined,
-      phone: '',
-      email: '',
-      address: '',
-      department: '',
-      hasArrived: false,
-      medicalCondition: '',
-      medicalTreatment: '',
-      keyCode: '',
-      ward: '',
-      stakeId: '',
-      age: '',
-      isMemberOfTheChurch: true,
-      notes: '',
-      shirtSize: '',
-      bloodType: '',
-      healthInsurance: '',
-      emergencyContactName: '',
-      emergencyContactPhone: '',
-      companyId: undefined,
-      roomId: undefined,
-    },
+    defaultValues: initialValues,
   });
 
   const {
@@ -96,36 +69,7 @@ const UserForm = () => {
   // Populate form with user data when loaded (edit mode)
   useEffect(() => {
     if (data && isEditMode) {
-      reset({
-        id: data.id,
-        firstName: data.firstName || '',
-        middleName: data.middleName || '',
-        paternalLastName: data.paternalLastName || '',
-        maternalLastName: data.maternalLastName || '',
-        dni: data.dni || '',
-        birthDate: data.birthDate || undefined,
-        gender: data.gender || undefined,
-        phone: data.phone || '',
-        email: data.email || '',
-        address: data.address || '',
-        department: data.department || '',
-        hasArrived: data.hasArrived ?? false,
-        medicalCondition: data.medicalCondition || '',
-        medicalTreatment: data.medicalTreatment || '',
-        keyCode: data.keyCode || '',
-        ward: data.ward || '',
-        stakeId: data.stake?.id || '',
-        age: data.age || '',
-        isMemberOfTheChurch: data.isMemberOfTheChurch ?? true,
-        notes: data.notes || '',
-        shirtSize: data.shirtSize || '',
-        bloodType: data.bloodType || '',
-        healthInsurance: data.healthInsurance || '',
-        emergencyContactName: data.emergencyContactName || '',
-        emergencyContactPhone: data.emergencyContactPhone || '',
-        companyId: data.company?.id || '',
-        roomId: data.userRooms?.[0]?.room?.id || '',
-      });
+      reset(getDefaultValues(data));
     }
   }, [data, reset, isEditMode]);
 

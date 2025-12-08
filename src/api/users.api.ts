@@ -45,7 +45,11 @@ export const markAsArrived = async (id: string, body: MarkAsArrivedDto): Promise
   return res.data;
 };
 
-export const permutaUser = async (body: CreateUserDto & { originalUserId: string }): Promise<IUser> => {
+export const permutaUser = async (
+  body:
+    | (CreateUserDto & { originalUserId: string })
+    | { permutaUserId: string; originalUserId: string; isExisting: boolean },
+): Promise<IUser> => {
   const res = await axiosApi.post(`${route}/permuta`, body);
   return res.data;
 };
