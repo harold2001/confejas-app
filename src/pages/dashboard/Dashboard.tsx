@@ -34,7 +34,6 @@ import usePlatform from '../../hooks/usePlatform';
 import Header from '../../components/Header/Header';
 import { getStatistics } from '../../api/users.api';
 import QUERY_KEYS from '../../constants/query-keys';
-import { UserStatisticsDto } from '../../interfaces/dto/statistics.dto';
 import { useSocket } from '../../hooks/useSocket';
 import toast from 'react-hot-toast';
 import { getPercentageFromTotal } from '../../utils/helpers';
@@ -48,7 +47,7 @@ const Dashboard = () => {
     data: statistics,
     isLoading,
     refetch,
-  } = useQuery<UserStatisticsDto>({
+  } = useQuery({
     queryKey: [QUERY_KEYS.GET_STATISTICS],
     queryFn: getStatistics,
     refetchOnMount: 'always',
@@ -410,44 +409,18 @@ const Dashboard = () => {
               </IonCol>
             </IonRow>
 
-            {/* Statistics Header */}
             <IonRow className={`ion-margin-top ${styles.sectionHeader}`}>
               <IonCol>
                 <h3 className='ion-no-margin'>
                   <IonIcon icon={businessOutline} style={{ marginRight: '0.5rem' }} />
-                  Compañías
+                  Estacas
                 </h3>
               </IonCol>
             </IonRow>
-
-            <IonRow>
-              <IonCol size='12'>
-                <IonCard color='primary'>
-                  <IonCardContent>
-                    <IonRow>
-                      {statistics?.companyStatistics.map((company) => (
-                        <IonCol key={company.companyId} size='6'>
-                          <div className='ion-text-center'>
-                            <p style={{ margin: 0, fontSize: '0.9rem' }}>{company.companyName}</p>
-                            <h2 style={{ margin: '0.5rem 0', color: 'var(--ion-color-tertiary)' }}>
-                              {company.userCount}
-                            </h2>
-                          </div>
-                        </IonCol>
-                      ))}
-                    </IonRow>
-                  </IonCardContent>
-                </IonCard>
-              </IonCol>
-            </IonRow>
-
             {/* Stake Statistics */}
             <IonRow>
               <IonCol size='12'>
                 <IonCard color='primary'>
-                  <IonCardHeader>
-                    <IonCardTitle>Estadísticas por Estaca</IonCardTitle>
-                  </IonCardHeader>
                   <IonCardContent>
                     <div style={{ overflowX: 'auto' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse' }}>

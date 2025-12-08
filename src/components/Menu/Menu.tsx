@@ -17,6 +17,7 @@ import {
   checkmarkDoneOutline,
   bedOutline,
   qrCodeOutline,
+  bonfireOutline,
 } from 'ionicons/icons';
 import './Menu.css';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -52,6 +53,11 @@ const appPages: AppPage[] = [
     icon: peopleOutline,
   },
   {
+    title: 'Compañías',
+    url: ROUTES.COMPANIES,
+    icon: bonfireOutline,
+  },
+  {
     title: 'Habitaciones',
     url: ROUTES.ROOMS,
     icon: bedOutline,
@@ -67,8 +73,8 @@ const Menu = () => {
     <IonMenu contentId='main' type='overlay'>
       <IonContent>
         <IonList id='inbox-list'>
-          <IonListHeader>
-            Bienvenido, {user?.firstName} {user?.paternalLastName}!
+          <IonListHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            Bienvenido, {user?.firstName}!
           </IonListHeader>
           <IonNote>{user?.email}</IonNote>
           {appPages

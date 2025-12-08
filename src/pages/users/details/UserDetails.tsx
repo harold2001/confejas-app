@@ -120,7 +120,7 @@ const UserDetails = () => {
 
   return (
     <IonPage>
-      {isMobileView && <Header title='Detalles del Participante' />}
+      {isMobileView && <Header title='Detalles del Participante' showBack />}
       <IonContent className='ion-padding'>
         <UserFormModal
           isOpen={isPermutaModalOpen}
@@ -130,10 +130,22 @@ const UserDetails = () => {
           onSuccess={handleModalSuccess}
         />
         <div className={styles.detailsContainer}>
-          <IonButton fill='clear' onClick={() => history.push(ROUTES.USERS)} className={styles.backButton}>
-            <IonIcon slot='start' icon={arrowBackOutline} />
-            Volver
-          </IonButton>
+          {!isMobileView && (
+            <IonButton
+              fill='clear'
+              onClick={() => {
+                if (history.length > 1) {
+                  history.goBack();
+                } else {
+                  history.push(ROUTES.USERS);
+                }
+              }}
+              className={styles.backButton}
+            >
+              <IonIcon slot='start' icon={arrowBackOutline} />
+              Volver
+            </IonButton>
+          )}
 
           {/* Header Card with Actions */}
           <IonCard color='primary'>

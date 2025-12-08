@@ -38,19 +38,6 @@ export interface UserStatisticsDto {
   }[];
   averageAge: number;
 
-  // Company statistics
-  companyStatistics: {
-    companyId: string;
-    companyName: string;
-    userCount: number;
-    users: {
-      id: string;
-      firstName: string;
-      paternalLastName: string;
-      maternalLastName: string;
-    }[];
-  }[];
-
   // Stake statistics
   stakeStatistics: {
     stakeId: string;

@@ -1,0 +1,51 @@
+.badge {
+  font-size: 1rem !important;
+}
+
+.companyCard {
+  margin-bottom: 1rem;
+}
+
+.companyCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.companyName {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.companyInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.mobileBadge {
+  font-size: 0.9rem !important;
+  padding: 0.4rem 0.6rem !important;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

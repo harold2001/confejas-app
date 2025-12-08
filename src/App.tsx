@@ -47,6 +47,8 @@ import AttendanceDetails from './pages/attendance/details/AttendanceDetails';
 import UserDetails from './pages/users/details/UserDetails';
 import Rooms from './pages/rooms/Rooms';
 import QR from './pages/qr/QR';
+import Companies from './pages/companies/Companies';
+import CompanyDetails from './pages/companies/details/CompanyDetails';
 
 setupIonicReact();
 
@@ -106,6 +108,8 @@ const App = () => {
               component={Rooms}
               allowedRoles={[ROLES.ADMIN, ROLES.STAFF]}
             />
+            <ProtectedRoute path={ROUTES.COMPANIES} exact={true} component={Companies} />
+            <ProtectedRoute path={ROUTES.DETAILS_COMPANY} exact={true} component={CompanyDetails} />
             {/* Add more protected routes here:
             <ProtectedRoute path='/settings' exact={true} component={Settings} />
             <ProtectedRoute path='/users' exact={true} component={Users} />

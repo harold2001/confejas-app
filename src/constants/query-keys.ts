@@ -10,6 +10,7 @@ const QUERY_KEYS = {
   GET_USERS_FOR_ROOM_ASSIGNMENT: 'getUsersForRoomAssignment',
   GET_COMPANIES_WITH_COUNT: 'getCompaniesWithCount',
   GET_ROOMS_WITH_COUNT: 'getRoomsWithCount',
+  GET_COMPANY_BY_ID: 'getCompanyById',
 };
 
 export default QUERY_KEYS;

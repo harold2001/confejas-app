@@ -1,0 +1,86 @@
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.detailsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.backButton {
+  margin-bottom: 1rem;
+}
+
+.companyName {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.statsContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statBadge {
+  font-size: 1rem !important;
+  padding: 0.5rem 1rem !important;
+}
+
+.clickableHeader {
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.countBadge {
+  margin-left: 1rem;
+  font-size: 0.9rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+.chevronIcon {
+  font-size: 1.5rem;
+  margin-left: auto;
+}
+
+.listContent {
+  padding: 0 !important;
+}
+
+.userItem {
+  --background: var(--ion-color-primary);
+  --border-color: rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    --background: var(--ion-color-primary-shade);
+  }
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+}

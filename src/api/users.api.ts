@@ -3,6 +3,7 @@ import { CreateUserDto } from '../interfaces/dto/create-user.dto';
 import { FilterUserDto } from '../interfaces/dto/filter-user.dto';
 import { MarkAsArrivedDto } from '../interfaces/dto/mark-as-arrived.dto';
 import { PaginationDto } from '../interfaces/dto/pagination.dto';
+import { UserStatisticsDto } from '../interfaces/dto/statistics.dto';
 import { UpdateUserDto } from '../interfaces/dto/update-user.dto';
 import { IUser } from '../interfaces/user.interface';
 import axiosApi from './index.api';
@@ -54,7 +55,7 @@ export const permutaUser = async (
   return res.data;
 };
 
-export const getStatistics = async () => {
+export const getStatistics = async (): Promise<UserStatisticsDto> => {
   const res = await axiosApi.get(`${route}/statistics`);
   return res.data;
 };
