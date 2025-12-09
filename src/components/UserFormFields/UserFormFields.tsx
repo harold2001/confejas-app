@@ -255,7 +255,7 @@ const UserFormFields = ({
                   roomsLoading
                     ? [{ label: 'Cargando...', value: '' }]
                     : rooms?.map((room) => ({
-                        label: `${room.floor?.building?.name || 'Sin edificio'}/${room.roomNumber} - Camas: ${
+                        label: `${room.floor?.building?.name || 'Sin edificio'} - ${room.roomNumber} - Camas: ${
                           room.occupiedBeds
                         }/${room.totalBeds}`,
                         value: room.id,

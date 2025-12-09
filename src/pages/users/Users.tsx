@@ -6,7 +6,6 @@ import {
   IonButton,
   IonIcon,
   useIonViewDidEnter,
-  IonToggle,
   IonLabel,
   IonCard,
   IonCardContent,
@@ -513,30 +512,84 @@ const Users = () => {
               {/* Is Member of the Church Toggle */}
               <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Miembro de la Iglesia</IonLabel>
-                <IonToggle
-                  checked={filtersDraft.isMemberOfTheChurch === true}
-                  onIonChange={(e) => handleFilterChange('isMemberOfTheChurch', e.detail.checked ? true : null)}
-                  color='success'
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  <IonCheckbox
+                    checked={filtersDraft.isMemberOfTheChurch === null}
+                    onIonChange={() => handleFilterChange('isMemberOfTheChurch', null)}
+                    labelPlacement='end'
+                  >
+                    Todos
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.isMemberOfTheChurch === true}
+                    onIonChange={() => handleFilterChange('isMemberOfTheChurch', true)}
+                    labelPlacement='end'
+                  >
+                    Sí
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.isMemberOfTheChurch === false}
+                    onIonChange={() => handleFilterChange('isMemberOfTheChurch', false)}
+                    labelPlacement='end'
+                  >
+                    No
+                  </IonCheckbox>
+                </div>
               </IonCol>
 
               {/* Has Medical Condition Toggle */}
               <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Tiene Condición Médica</IonLabel>
-                <IonToggle
-                  checked={filtersDraft.hasMedicalCondition === true}
-                  onIonChange={(e) => handleFilterChange('hasMedicalCondition', e.detail.checked ? true : null)}
-                  color='success'
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  <IonCheckbox
+                    checked={filtersDraft.hasMedicalCondition === null}
+                    onIonChange={() => handleFilterChange('hasMedicalCondition', null)}
+                    labelPlacement='end'
+                  >
+                    Todos
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.hasMedicalCondition === true}
+                    onIonChange={() => handleFilterChange('hasMedicalCondition', true)}
+                    labelPlacement='end'
+                  >
+                    Sí
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.hasMedicalCondition === false}
+                    onIonChange={() => handleFilterChange('hasMedicalCondition', false)}
+                    labelPlacement='end'
+                  >
+                    No
+                  </IonCheckbox>
+                </div>
               </IonCol>
               {/* Has Medical Treatment Toggle */}
               <IonCol className={isMobileView ? '' : 'ion-padding'} size='6' sizeMd='3'>
                 <IonLabel className={styles.filterLabel}>Tiene Tratamiento Médico</IonLabel>
-                <IonToggle
-                  checked={filtersDraft.hasMedicalTreatment === true}
-                  onIonChange={(e) => handleFilterChange('hasMedicalTreatment', e.detail.checked ? true : null)}
-                  color='success'
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  <IonCheckbox
+                    checked={filtersDraft.hasMedicalTreatment === null}
+                    onIonChange={() => handleFilterChange('hasMedicalTreatment', null)}
+                    labelPlacement='end'
+                  >
+                    Todos
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.hasMedicalTreatment === true}
+                    onIonChange={() => handleFilterChange('hasMedicalTreatment', true)}
+                    labelPlacement='end'
+                  >
+                    Sí
+                  </IonCheckbox>
+                  <IonCheckbox
+                    checked={filtersDraft.hasMedicalTreatment === false}
+                    onIonChange={() => handleFilterChange('hasMedicalTreatment', false)}
+                    labelPlacement='end'
+                  >
+                    No
+                  </IonCheckbox>
+                </div>
               </IonCol>
             </IonRow>
 
