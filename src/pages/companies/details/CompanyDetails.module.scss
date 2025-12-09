@@ -10,8 +10,22 @@
   margin: 0 auto;
 }
 
-.backButton {
+.actionButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.backButton {
+  margin: 0;
+}
+
+.exportButton {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
 }
 
 .companyName {

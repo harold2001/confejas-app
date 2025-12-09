@@ -23,17 +23,23 @@ import usePlatform from '../../hooks/usePlatform';
 import { CompanyStatisticsDto } from '../../interfaces/company.interface';
 import MobileView from './MobileView';
 import styles from './Companies.module.scss';
+import { useSocket } from '../../hooks/useSocket';
 
 const Companies = () => {
   const { isMobile } = usePlatform();
   const isMobileView = isMobile();
 
-  const { data: statistics, isLoading } = useQuery({
-    queryKey: [QUERY_KEYS.GET_STATISTICS],
+  const {
+    data: statistics,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.GET_COMPANIES_STATISTICS],
     queryFn: getCompaniesStatistics,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: 'always',
-    refetchOnReconnect: 'always',
+  });
+
+  useSocket(() => {
+    refetch();
   });
 
   const actionBodyTemplate = (rowData: CompanyStatisticsDto) => {

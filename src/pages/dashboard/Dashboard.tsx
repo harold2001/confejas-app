@@ -105,11 +105,11 @@ const Dashboard = () => {
   };
 
   const ageRangeData = {
-    labels: statistics?.ageRangeStatistics.map((item) => item.range) || [],
+    labels: statistics?.ageRangeStatistics?.map((item) => item.range) || [],
     datasets: [
       {
         label: 'Cantidad de Usuarios',
-        data: statistics?.ageRangeStatistics.map((item) => item.count) || [],
+        data: statistics?.ageRangeStatistics?.map((item) => item.count) || [],
         backgroundColor: 'rgba(153, 102, 255, 0.8)',
         borderColor: 'rgba(153, 102, 255, 1)',
         borderWidth: 1,
@@ -118,11 +118,11 @@ const Dashboard = () => {
   };
 
   const shirtSizeData = {
-    labels: statistics?.shirtSizeStatistics.map((item) => item.size) || [],
+    labels: statistics?.shirtSizeStatistics?.map((item) => item.size) || [],
     datasets: [
       {
         label: 'Cantidad',
-        data: statistics?.shirtSizeStatistics.map((item) => item.count) || [],
+        data: statistics?.shirtSizeStatistics?.map((item) => item.count) || [],
         backgroundColor: 'rgba(255, 159, 64, 0.8)',
         borderColor: 'rgba(255, 159, 64, 1)',
         borderWidth: 1,
@@ -435,7 +435,7 @@ const Dashboard = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {statistics?.stakeStatistics.map((stake) => (
+                          {statistics?.stakeStatistics?.map((stake) => (
                             <tr key={stake.stakeId} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                               <td style={{ padding: '0.75rem' }}>{stake.stakeName}</td>
                               <td style={{ padding: '0.75rem', textAlign: 'center' }}>

@@ -14,7 +14,7 @@ export const getCompaniesWithCount = async (): Promise<Array<ICompany & { userCo
   return res.data;
 };
 
-export const getCompaniesStatistics = async (): Promise<Array<CompanyStatisticsDto>> => {
+export const getCompaniesStatistics = async (): Promise<CompanyStatisticsDto[]> => {
   const res = await axiosApi.get(`${route}/statistics`);
   return res.data;
 };

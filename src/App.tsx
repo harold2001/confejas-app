@@ -110,11 +110,6 @@ const App = () => {
             />
             <ProtectedRoute path={ROUTES.COMPANIES} exact={true} component={Companies} />
             <ProtectedRoute path={ROUTES.DETAILS_COMPANY} exact={true} component={CompanyDetails} />
-            {/* Add more protected routes here:
-            <ProtectedRoute path='/settings' exact={true} component={Settings} />
-            <ProtectedRoute path='/users' exact={true} component={Users} />
-            <ProtectedRoute path='/rooms' exact={true} component={Rooms} />
-            */}
           </IonRouterOutlet>
         </MainLayout>
       </IonReactRouter>
