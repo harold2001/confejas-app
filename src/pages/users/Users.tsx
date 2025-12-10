@@ -694,16 +694,22 @@ const Users = () => {
                     headerStyle={{ textAlign: 'center' }}
                     sortable
                   />
-                  <Column
+                  {/* <Column
                     field='age'
                     header='Edad'
                     sortable
                     bodyStyle={{ textAlign: 'center' }}
                     headerStyle={{ textAlign: 'center' }}
-                  />
+                  /> */}
                   <Column
                     field='userRooms.0.room.roomNumber'
                     header='Habitación'
+                    bodyStyle={{ textAlign: 'center' }}
+                    headerStyle={{ textAlign: 'center' }}
+                  />
+                  <Column
+                    field='company.number'
+                    header='Compañía'
                     bodyStyle={{ textAlign: 'center' }}
                     headerStyle={{ textAlign: 'center' }}
                   />
